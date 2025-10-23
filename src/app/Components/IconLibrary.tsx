@@ -1,4 +1,4 @@
-export type IconType = "Account" | "Home";
+export type IconType = "Account" | "Home" | "Search" | "Filter" | "Library";
 
 interface IconProps {
     type: IconType;
@@ -19,8 +19,23 @@ const iconMap: Record<string, React.FC<{size?: string; color?: string, className
     </svg>
   ),
   Home: ({ size = "1em", color = "currentColor", className="" }) => (
-    <svg className={className} fill={color} xmlns="http://www.w3.org/2000/svg" width={size} viewBox="0 0 50 50">
+    <svg className={className} fill={color} width={size} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50">
         <path d="M41.752 18.925 25.506 6.344a1.255 1.255 0 0 0 -1.55 0.013L8.23 18.937a1.25 1.25 0 0 0 -0.469 0.978v22.75a1.252 1.252 0 0 0 1.252 1.252h9.348a1.253 1.253 0 0 0 1.252 -1.252V28.735h10.77V42.665a1.252 1.252 0 0 0 1.252 1.252h9.35a1.253 1.253 0 0 0 1.252 -1.252v-22.75a1.25 1.25 0 0 0 -0.486 -0.99"/>
+    </svg>
+  ),
+  Search: ({ size = "1em", color = "currentColor", className="" }) => (
+    <svg className={className} fill={color} width={size} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M21.71 20.29 18 16.61A9 9 0 1 0 16.61 18l3.68 3.68a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.39M11 18a7 7 0 1 1 7-7 7 7 0 0 1-7 7"/>
+    </svg>
+  ),
+  Filter: ({ size = "1em", color = "currentColor", className="" }) => (
+    <svg className={className} fill={color} width={size} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M9 5a1 1 0 1 0 0 2 1 1 0 0 0 0-2M6.17 5a3.001 3.001 0 0 1 5.66 0H19a1 1 0 1 1 0 2h-7.17a3.001 3.001 0 0 1-5.66 0H5a1 1 0 0 1 0-2zM15 11a1 1 0 1 0 0 2 1 1 0 0 0 0-2m-2.83 0a3.001 3.001 0 0 1 5.66 0H19a1 1 0 1 1 0 2h-1.17a3.001 3.001 0 0 1-5.66 0H5a1 1 0 1 1 0-2zM9 17a1 1 0 1 0 0 2 1 1 0 0 0 0-2m-2.83 0a3.001 3.001 0 0 1 5.66 0H19a1 1 0 1 1 0 2h-7.17a3.001 3.001 0 0 1-5.66 0H5a1 1 0 1 1 0-2z"/>
+    </svg>
+  ),
+  Library: ({ size = "1em", color = "currentColor", className="" }) => (
+    <svg className={className} stroke={color} width={size} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="m16 6 4 14M12 6v14M8 8v12M4 4v16"/>
     </svg>
   ),
 };
