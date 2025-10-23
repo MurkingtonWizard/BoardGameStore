@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { IBoardGame } from "../../../model/BoardGame";
+import { IBoardGame } from "@/model/BoardGame";
 
 export default function GameDetailPage() {
   const { id } = useParams();
