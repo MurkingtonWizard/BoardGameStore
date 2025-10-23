@@ -1,4 +1,4 @@
-export type IconType = "Account" | "Home" | "Search" | "Filter" | "Library";
+export type IconType = "Account" | "Home" | "Search" | "Filter" | "Library" | "Reset";
 
 interface IconProps {
     type: IconType;
@@ -36,6 +36,14 @@ const iconMap: Record<string, React.FC<{size?: string; color?: string, className
   Library: ({ size = "1em", color = "currentColor", className="" }) => (
     <svg className={className} stroke={color} width={size} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="m16 6 4 14M12 6v14M8 8v12M4 4v16"/>
+    </svg>
+  ),
+  Reset: ({ size = "1em", color = "currentColor", className="" }) => (
+    <svg className={className} width={size} viewBox="0 0 21 21" xmlns="http://www.w3.org/2000/svg">
+      <g fill="none" fillRule="evenodd" stroke={color} strokeLinecap="round" strokeLinejoin="round" transform="matrix(0 1 1 0 2.5 2.5)" strokeWidth="2">
+        <path d="m3.98652376 1.07807068c-2.38377179 1.38514556-3.98652376 3.96636605-3.98652376 6.92192932 0 4.418278 3.581722 8 8 8s8-3.581722 8-8-3.581722-8-8-8"/>
+        <path d="m4 1v4h-4" transform="matrix(1 0 0 -1 0 6)"/>
+      </g>
     </svg>
   ),
 };
