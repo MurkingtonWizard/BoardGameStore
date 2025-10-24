@@ -12,8 +12,9 @@ export type Filters = {
 };
 
 export function SearchBar() {
-    const [query, setQuery] = useState("");
+    const [search, setQuery] = useState("");
     const [filtersOpen, setFiltersOpen] = useState(false);
+    const page = 1;
 
     const [filters, setFilters] = useState<Filters>({
         minAge: 0,
@@ -53,8 +54,9 @@ export function SearchBar() {
     function handleSearch(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
         const queryJSON = {
-            query,
+            search,
             filters,
+            page,
         };
         console.log("Searching for:", queryJSON);
     }
@@ -72,7 +74,7 @@ export function SearchBar() {
                     id="site-search"
                     name="q"
                     placeholder="Search..."
-                    value={query}
+                    value={search}
                     onChange={handleChange}/>
             </div>
             <button className="link" type="submit"><Icon type="Search" size="2em"/></button>
