@@ -1,20 +1,12 @@
 'use client'
 import { ChangeEvent, ChangeEventHandler, FormEvent, useEffect, useRef, useState } from "react";
 import { Icon } from "./IconLibrary";
+import { BoardGameStateProps, Filters, FetchStoreData, PageStateProps } from "@/app/Components";
 
-export type Filters = {
-  minAge: number; maxAge: number;
-  minPlayers: number; maxPlayers: number;
-  minYear: number; maxYear: number;
-  minPlaytime: number; maxPlaytime: number;
-  minBGGScore: number; maxBGGScore: number;
-  minStoreScore: number; maxStoreScore: number;
-};
 
-export function SearchBar() {
+export function SearchBar({ results, setResults, page, setPage }: BoardGameStateProps & PageStateProps) {
     const [search, setQuery] = useState("");
     const [filtersOpen, setFiltersOpen] = useState(false);
-    const page = 1;
 
     const [filters, setFilters] = useState<Filters>({
         minAge: 0,
@@ -51,14 +43,9 @@ export function SearchBar() {
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, [filtersOpen]);
 
-    function handleSearch(e: FormEvent<HTMLFormElement>) {
+    async function handleSearch(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
-        const queryJSON = {
-            search,
-            filters,
-            page,
-        };
-        console.log("Searching for:", queryJSON);
+        setResults(await FetchStoreData(search, filters, page));
     }
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
