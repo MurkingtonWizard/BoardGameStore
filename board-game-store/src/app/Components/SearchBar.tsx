@@ -1,27 +1,15 @@
 'use client'
-import { ChangeEvent, ChangeEventHandler, FormEvent, useEffect, useRef, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
 import { Icon } from "./IconLibrary";
-import { BoardGameStateProps, Filters, FetchStoreData, PageStateProps } from "@/app/Components";
+import { Filters, FetchStoreData, DefaultFilter, HeaderProps, FetchLibraryData } from "@/app/Components";
 
 
-export function SearchBar({ results, setResults, page, setPage }: BoardGameStateProps & PageStateProps) {
+export function SearchBar(props: HeaderProps) {
+    const { results, setResults } = props;
     const [search, setQuery] = useState("");
     const [filtersOpen, setFiltersOpen] = useState(false);
 
-    const [filters, setFilters] = useState<Filters>({
-        minAge: 0,
-        maxAge: 100,
-        minPlayers: 1,
-        maxPlayers: 100,
-        minYear: -3000,
-        maxYear: 2025,
-        minPlaytime: 5,
-        maxPlaytime: 1440,
-        minBGGScore: 1,
-        maxBGGScore: 10,
-        minStoreScore: 1,
-        maxStoreScore: 10,
-    });
+    const [filters, setFilters] = useState<Filters>(DefaultFilter);
 
     const filterButtonRef = useRef<HTMLButtonElement>(null);
     const filterMenuRef = useRef<HTMLDivElement>(null);
@@ -45,7 +33,14 @@ export function SearchBar({ results, setResults, page, setPage }: BoardGameState
 
     async function handleSearch(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
-        setResults(await FetchStoreData(search, filters, page));
+        if(props.type == "store") {
+            const data = await FetchStoreData(search, filters, props.page);
+            setResults(data.games);
+            props.setMaxPage(data.total_pages);
+        } else {
+            const data = await FetchLibraryData(search, filters);
+            setResults(data.games);
+        }
     }
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {

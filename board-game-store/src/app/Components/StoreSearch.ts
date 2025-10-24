@@ -8,8 +8,28 @@ export type Filters = {
   minBGGScore: number; maxBGGScore: number;
   minStoreScore: number; maxStoreScore: number;
 };
+export type SearchResults = {
+    games: IBoardGame[],
+    total_pages: number
+}
 
-export const FetchStoreData = async (search: string, filters: Filters, page: number): Promise<IBoardGame[]> => {
+export const DefaultFilter: Filters = {
+    minAge: 0,
+    maxAge: 100,
+    minPlayers: 1,
+    maxPlayers: 100,
+    minYear: -3000,
+    maxYear: 2025,
+    minPlaytime: 5,
+    maxPlaytime: 1440,
+    minBGGScore: 1,
+    maxBGGScore: 10,
+    minStoreScore: 1,
+    maxStoreScore: 10,
+} 
+
+export const FetchStoreData = async (search: string, filters: Filters | null, page: number): Promise<SearchResults> => {
+    if(filters === null) filters = DefaultFilter;
     const payload = {
         search,
         filters,
@@ -25,12 +45,28 @@ export const FetchStoreData = async (search: string, filters: Filters, page: num
         const resultData = await response.json();
         console.log(resultData);
         if(resultData.statusCode == 200) {
-            console.log(resultData.body);
-            return resultData.body as IBoardGame[];
+            console.log(resultData.body.games);
+            return {
+                games: resultData.body.games as IBoardGame[],
+                total_pages: (resultData.body.total_games / 10 + 1)
+            };
         }
-        return [];
+        return {
+            games: [],
+            total_pages: 0
+        };
     } catch (error) {
         console.error('Error fetching data:', error);
-        return [];
+        return {
+            games: [],
+            total_pages: 0
+        };
     }
+}
+
+export const FetchLibraryData = async (search: string, filters: Filters | null): Promise<SearchResults> => { 
+    return {
+        games: [],
+        total_pages: 0
+    };
 }
