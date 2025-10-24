@@ -2,9 +2,10 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { IBoardGame } from "../../model/BoardGame";
+import { IBoardGame } from "@/model/BoardGame";
+import { BoardGameStateProps, PageStateProps } from "@/app/Components"
 
-export default function StorePage() {
+export default function StorePage({ results, setResults, page, setPage }: BoardGameStateProps & PageStateProps) {
   const [games, setGames] = useState<IBoardGame[]>([]);
 
   useEffect(() => {
@@ -120,7 +121,7 @@ export default function StorePage() {
     <main className="pt-24 p-8">
       <h1 className="text-3xl font-bold mb-6">Browse Board Games</h1>
       <div className="grid grid-cols-3 gap-6">
-        {games.map((game) => (
+        {results.map((game) => (
           <div key={game.id}>
             {/* Clicking card goes to detail page */}
             <Link href={`/store/${game.id}`}>
