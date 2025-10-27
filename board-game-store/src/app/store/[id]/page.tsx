@@ -9,12 +9,13 @@ export default function GameDetailPage() {
   const [game, setGame] = useState<IBoardGame | null>(null);
 
   useEffect(() => {
-    const storedGames = localStorage.getItem("games");
-    if (storedGames) {
-      const games = JSON.parse(storedGames);
-      const found = games.find((g: IBoardGame) => g.id === id);
-      if (found) setGame(found);
+    const storedGame = localStorage.getItem("selectedGame");
+    if (storedGame) {
+    const parsed = JSON.parse(storedGame);
+    if (String(parsed.id) === String(id)) {
+      setGame(parsed);
     }
+  }
   }, [id]);
 
   if (!game) return <p className="pt-24 p-8">Loading...</p>;
@@ -42,27 +43,28 @@ export default function GameDetailPage() {
             <p><strong>Age:</strong> {game.min_age}+</p>
             <p><strong>BGG Score:</strong> {game.BGG_score}</p>
             <p><strong>Average User Rating:</strong> {game.average_user_score}</p>
-            <p><strong>Users Rated:</strong> {game.users_rated.toLocaleString()}</p>
+            {game.users_rated &&
+            <p><strong>Users Rated:</strong> {game.users_rated.toLocaleString()}</p>}
             <p><strong>Rank:</strong> #{game.rank}</p>
             <p><strong>Store Page Rating:</strong> {game.store_page_rating}</p>
           </div>
 
           {/* Optional: lists */}
-          {game.mechanics.length > 0 && (
+          {game.mechanics && game.mechanics.length > 0 && (
             <div className="mt-4">
               <h2 className="font-semibold text-lg">Mechanics</h2>
               <p className="text-gray-700">{game.mechanics.join(", ")}</p>
             </div>
           )}
 
-          {game.categories.length > 0 && (
+          {game.categories && game.categories.length > 0 && (
             <div className="mt-4">
               <h2 className="font-semibold text-lg">Categories</h2>
               <p className="text-gray-700">{game.categories.join(", ")}</p>
             </div>
           )}
 
-          {game.family.length > 0 && (
+          {game.family && game.family.length > 0 && (
             <div className="mt-4">
               <h2 className="font-semibold text-lg">Family</h2>
               <p className="text-gray-700">{game.family.join(", ")}</p>

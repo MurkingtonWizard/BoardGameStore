@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { IBoardGame } from "@/model/BoardGame";
-import { FetchStoreData, Footer, Header, StoreHeaderProps } from "@/app/Components"
+import { FetchStoreData, Footer, GameCard, Header, StoreHeaderProps } from "@/app/Components"
 
 export default function StorePage() {
   const [games, setGames] = useState<IBoardGame[]>([]);
@@ -29,20 +29,7 @@ export default function StorePage() {
           {games.map((game) => (
             <div key={game.id}>
               {/* Clicking card goes to detail page */}
-              <Link href={`/store/${game.id}`}>
-                <div className="p-4 border rounded-xl shadow hover:shadow-lg transition cursor-pointer">
-                  <img
-                    src={game.thumbnail}
-                    alt={game.name}
-                    className="w-full h-48 object-contain mb-4"
-                  />
-                  <h2 className="text-xl font-semibold">{game.name}</h2>
-                  <p className="text-gray-600">${game.price.toFixed(2)}</p>
-                  <p className="text-sm text-gray-500 mt-2">
-                    {game.description.slice(0, 60)}...
-                  </p>
-                </div>
-              </Link>
+              <GameCard game={game}/>
 
               {/* Add to Library button */}
               <button
