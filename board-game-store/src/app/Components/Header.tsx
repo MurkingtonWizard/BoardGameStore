@@ -1,25 +1,22 @@
 import Link from "next/link";
-import { HeaderProps, Icon, SearchBar } from "@/app/Components"
+import { Filters, Icon, SearchBar } from "@/app/Components"
 
-export function Header(props: HeaderProps) {
-    const { results, setResults } = props;
+
+export type HeaderProps = {
+    search: [string, React.Dispatch<React.SetStateAction<string>>],
+    filter: [Filters, React.Dispatch<React.SetStateAction<Filters>>],
+}
+
+export function Header({
+        search,
+        filter,
+        }: HeaderProps) {
     return (
     <header>
         <nav className="header">
             <Link href={"/"} className="link"><Icon type="Home" size="2em"/></Link>
             <Link href={"/library"} className="link"><Icon type="Library" size="2em"/></Link>
-            {props.type === "store" ? (
-                <SearchBar type={props.type}
-                    results={results}
-                    setResults={setResults}
-                    page={props.page}
-                    setPage={props.setPage}
-                    maxPage={props.maxPage}
-                    setMaxPage={props.setMaxPage}
-                />
-            ) : (
-                <SearchBar type={props.type} results={results} setResults={setResults} />
-            )}
+            <SearchBar search={search} filter={filter}/>
             <Link href={"/account"} className="link"><Icon type="Account" size="2em"/></Link>
         </nav>
     </header>

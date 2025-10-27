@@ -1,15 +1,17 @@
 'use client'
 import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
 import { Icon } from "./IconLibrary";
-import { Filters, FetchStoreData, DefaultFilter, HeaderProps, FetchLibraryData } from "@/app/Components";
+import { Filters, DefaultFilter, HeaderProps } from "@/app/Components";
 
 
-export function SearchBar(props: HeaderProps) {
-    const { results, setResults } = props;
-    const [search, setQuery] = useState("");
+export function SearchBar({
+        search: [searchStr, setSearch],
+        filter: [filters, setFilters],
+        }: HeaderProps) {
+    const [internalSearch, setInternalSearch] = useState("");
     const [filtersOpen, setFiltersOpen] = useState(false);
 
-    const [filters, setFilters] = useState<Filters>(DefaultFilter);
+    const [internalFilter, setInternalFilters] = useState<Filters>(DefaultFilter);
 
     const filterButtonRef = useRef<HTMLButtonElement>(null);
     const filterMenuRef = useRef<HTMLDivElement>(null);
@@ -33,18 +35,12 @@ export function SearchBar(props: HeaderProps) {
 
     async function handleSearch(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
-        if(props.type == "store") {
-            const data = await FetchStoreData(search, filters, props.page);
-            setResults(data.games);
-            props.setMaxPage(data.total_pages);
-        } else {
-            const data = await FetchLibraryData(search, filters);
-            setResults(data.games);
-        }
+        setFilters(internalFilter);
+        setSearch(internalSearch);
     }
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-        setQuery(e.target.value);
+        setInternalSearch(e.target.value);
     };
 
     return (
@@ -56,13 +52,13 @@ export function SearchBar(props: HeaderProps) {
                     id="site-search"
                     name="q"
                     placeholder="Search..."
-                    value={search}
+                    value={internalSearch}
                     onChange={handleChange}/>
             </div>
             <button className="link" type="submit"><Icon type="Search" size="2em"/></button>
             {filtersOpen && (
                 <div ref={filterMenuRef}  className="filter-menu-container">
-                    <FilterMenu filters={filters} setFilters={setFilters} />
+                    <FilterMenu filters={internalFilter} setFilters={setInternalFilters} />
                 </div>
             )}
         </form>
