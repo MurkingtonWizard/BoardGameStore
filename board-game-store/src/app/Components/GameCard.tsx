@@ -24,7 +24,7 @@ export function GameCard({ game }: {game: IBoardGame}) {
         className="w-full h-48 object-contain mb-4"
       />
       <h2 className="text-xl font-semibold">{game.name}</h2>
-      <p className="text-gray-600">${game.price.toFixed(2)}</p>
+      {game.price && (<p className="text-gray-600">${game.price.toFixed(2)}</p>)}
       <p className="text-sm text-gray-500 mt-2">
         {game.description.slice(0, 60)}...
       </p>
