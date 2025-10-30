@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { IBoardGame } from "@/model/BoardGame";
+import { Ratings } from "@/app/Components/Ratings";
+import { Reviews } from "@/app/Components/Reviews";
 
 export default function GameDetailPage() {
   const { id } = useParams();
@@ -34,7 +36,8 @@ export default function GameDetailPage() {
         <div className="flex-1">
         <h1 className="text-4xl font-bold mb-4">{game.name} <span className="text-4xl font-bold mb-4">({game.year_published})</span></h1>
           <p className="text-gray-600 mb-4">{game.description}</p>
-          <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm">
+          <div className="grid grid-cols-2 gap-x-8 gap-y-3 text-base leading-relaxed">
+
             <p><strong>Price:</strong> ${game.price.toFixed(2)}</p>
             <p><strong>Players:</strong> {game.min_players}–{game.max_players}</p>
             <p><strong>Playtime:</strong> {game.playtime} min</p>
@@ -49,7 +52,18 @@ export default function GameDetailPage() {
             <p><strong>Store Page Rating:</strong> {game.store_page_rating}</p>
           </div>
 
-          {/* Optional: lists */}
+          {/* Store Page Rating + Reviews Section */}
+          <div className="mt-8 border-t pt-6">
+            <h2 className="text-2xl font-semibold mb-2">Rate</h2>
+  
+            {/* Star rating component */}
+            <Ratings gameId={game.id} />
+
+            {/* Reviews list and input */}
+            <Reviews gameId={game.id} />
+          </div>
+
+          {/* Other packs */}
           {game.mechanics && game.mechanics.length > 0 && (
             <div className="mt-4">
               <h2 className="font-semibold text-lg">Mechanics</h2>
@@ -90,7 +104,7 @@ export default function GameDetailPage() {
             Add to Library
           </button>
 
-          {/* Optional back button */}
+          {/* Back button */}
           <button
             onClick={() => window.history.back()}
             className="mt-3 ml-3 border border-gray-400 text-gray-700 px-4 py-2 rounded hover:bg-gray-100"
