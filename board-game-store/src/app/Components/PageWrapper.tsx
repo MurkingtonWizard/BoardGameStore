@@ -36,7 +36,7 @@ export function PageWrapper({ children }: PageWrapperProps) {
             setPages([pages[0],data.total_pages]);
         } else {
             const data = await FetchLibraryData(search, filters);
-            setGames(data.games);
+            setGames(data === null ? [] : data.games);
         }
     })
 
