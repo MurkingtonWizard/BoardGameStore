@@ -1,5 +1,3 @@
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 import {cookies} from "next/headers";
 import {NextResponse} from "next/server";
 
@@ -14,29 +12,18 @@ export async function POST(request: Request) {
 																		 {
 			method: 'POST',
 			body: JSON.stringify({
-				"email": res.email
+				"email": res.email,
+				"password": res.password
 			})
 		});
 		const resultData = await userResponse.json();
 		console.log(resultData);
 
-		const validPass = await bcrypt.compare(res.password, resultData.body.password);
-		if (validPass) {
-			console.log("valid password");
-		} else {
-			console.log("invalid password");
-			return Response.json({message: "Invalid password!"}, {status: 401});
+		if (resultData.statusCode != 200) {
+			throw new Error("Incorrect username or password!");
 		}
 
-		const token = jwt.sign(
-			{
-				username: resultData.body.username,
-				email: resultData.body.email,
-				loggedIn: true
-			},
-			JWT_SECRET,
-			{ expiresIn: "24h" }
-		);
+		const token = resultData.body.token;			
 	
 		const isProduction = process.env.NODE_ENV === "production";
 		return NextResponse.json(
