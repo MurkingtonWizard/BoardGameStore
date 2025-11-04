@@ -1,7 +1,8 @@
 'use client'
 import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
 import { Icon } from "./IconLibrary";
-import { Filters, DefaultFilter, HeaderProps } from "@/app/Components";
+import { HeaderProps } from "@/app/Components";
+import { Filters, DefaultFilter, } from "@/Controllers"
 
 
 export function SearchBar({

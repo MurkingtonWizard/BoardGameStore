@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { Filters, Icon, SearchBar } from "@/app/Components"
+import { Icon, SearchBar } from "@/app/Components"
+import { Filters, DefaultFilter, } from "@/Controllers"
 
 
 export type HeaderProps = {

@@ -1,7 +1,8 @@
 "use client"
 import { ReactElement, useEffect, useState } from "react";
-import { DefaultFilter, FetchLibraryData, FetchStoreData, Footer, Header, LibraryPage, StorePage } from "@/app/Components";
+import { Footer, Header, LibraryPage, StorePage } from "@/app/Components";
 import { IBoardGame } from "@/model";
+import { DefaultFilter, FetchLibraryData, FetchStoreData, } from "@/Controllers"
 
 export interface ChildProps {
     boardGames: IBoardGame[];
