@@ -2,7 +2,7 @@
 import { ReactElement, useEffect, useState } from "react";
 import { Footer, Header, LibraryPage, StorePage } from "@/app/Components";
 import { IBoardGame } from "@/model";
-import { DefaultFilter, FetchLibraryData, FetchStoreData, } from "@/Controllers"
+import { DefaultFilter, FetchGameSearch, } from "@/Controllers"
 
 export interface ChildProps {
     boardGames: IBoardGame[];
@@ -36,11 +36,11 @@ export function PageWrapper({ children }: PageWrapperProps) {
 
     const FetchGames = (async () => {
         if(type == "store") {
-            const data = await FetchStoreData(search, filters, pages[0]);
+            const data = await FetchGameSearch(search, filters, "store", pages[0]);
             setGames(data.games);
             setPages([pages[0],data.total_pages]);
         } else {
-            const data = await FetchLibraryData(search, filters);
+            const data = await FetchGameSearch(search, filters, "library");
             console.log(data);
             setGames(data === null ? [] : data.games);
         }
