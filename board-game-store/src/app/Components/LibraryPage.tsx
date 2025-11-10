@@ -2,12 +2,6 @@ import { GameCard } from "./GameCard";
 import { ChildProps, RefreshProp } from "./PageWrapper";
 
 export function LibraryPage({boardGames, onRefresh} : ChildProps & RefreshProp) {
-
-    console.log(boardGames);
-    const removeGame = (id: number) => {
-        console.log("Library: Remove game");
-    };
-    
     return (
     <main className="pt-24 p-8">
     <h1 className="text-3xl font-bold mb-6">My Library</h1>
