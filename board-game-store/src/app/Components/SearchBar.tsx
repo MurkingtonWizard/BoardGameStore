@@ -47,7 +47,7 @@ export function SearchBar({
     return (
         <form className="search-bar" role="search" aria-label="Site search" onSubmit={handleSearch}>
             <div className="left">
-                <button className="link" ref={filterButtonRef} onClick={() => setFiltersOpen((v) => !v)}><Icon className="link" type="Filter" size="2em"/></button>
+                <button className="link" type="button" ref={filterButtonRef} onClick={() => setFiltersOpen((v) => !v)}><Icon className="link" type="Filter" size="2em"/></button>
                 <input
                     type="search"
                     id="site-search"
