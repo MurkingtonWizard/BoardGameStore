@@ -1,5 +1,5 @@
 export interface IBoardGame {
-    id: string,
+    id: number,
     name: string,
     description: string,
     year_published: number,
@@ -21,6 +21,7 @@ export interface IBoardGame {
     expansions: number[], // list of ids
     family: string[],
     mechanics: string[],
-    categories: string[]
+    categories: string[],
+    owned: boolean
 }
 
