@@ -1,5 +1,3 @@
-import { IBoardGame } from "@/model";
-
 export type OwnedAction = "add" | "remove";
 
 export const UpdateOwnedGame = async (boardGameID: number, action: OwnedAction): Promise<boolean> => {

@@ -32,6 +32,7 @@ export const FetchStoreData = async (search: string, filters: Filters | null, pa
     let token = localStorage.getItem('token'); // add token to search to toggle owned buttons
     if(filters === null) filters = DefaultFilter;
     const payload = {
+        token,
         search,
         filters,
         page,

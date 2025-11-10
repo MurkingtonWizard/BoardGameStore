@@ -2,7 +2,8 @@ import { ChildProps } from "./PageWrapper";
 
 export function LibraryPage({boardGames} : ChildProps) {
 
-    const removeGame = (id: string) => {
+    console.log(boardGames);
+    const removeGame = (id: number) => {
         console.log("Library: Remove game");
     };
     

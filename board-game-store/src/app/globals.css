@@ -146,6 +146,13 @@ button {
   align-items: center;
 }
 
+.page-col {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
 .page-link a {
   color: var(--color-selected);
   text-decoration: underline;

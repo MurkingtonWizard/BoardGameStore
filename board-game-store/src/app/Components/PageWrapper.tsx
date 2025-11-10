@@ -8,9 +8,12 @@ export interface ChildProps {
     boardGames: IBoardGame[];
     pages: [[number, number], React.Dispatch<React.SetStateAction<[number, number]>>],
 };
-type AllowedChilePage = ReactElement<typeof StorePage> | ReactElement<typeof LibraryPage>;
+export interface RefreshProp {
+    onRefresh: () => void; 
+}
+type AllowedChildPage = ReactElement<typeof StorePage> | ReactElement<typeof LibraryPage>;
 interface PageWrapperProps {
-  children: (props: ChildProps) => AllowedChilePage;
+  children: (props: ChildProps & RefreshProp) => AllowedChildPage;
 }
 
 export function PageWrapper({ children }: PageWrapperProps) {
@@ -18,10 +21,12 @@ export function PageWrapper({ children }: PageWrapperProps) {
     const [filters, setFilters] = useState(DefaultFilter);
     const [pages, setPages] = useState<[number, number]>([1,0]);
     const [games, setGames] = useState<IBoardGame[]>([]);
+    const [refresh, setRefresh] = useState(0);
 
     const child = children({
         boardGames: games,       
-        pages: [pages, setPages] 
+        pages: [pages, setPages],
+        onRefresh: () => { setRefresh(refresh === 1 ? 0 : 1); }, 
     });
 
     const type: "store" | "library" | "unknown" = 
@@ -36,6 +41,7 @@ export function PageWrapper({ children }: PageWrapperProps) {
             setPages([pages[0],data.total_pages]);
         } else {
             const data = await FetchLibraryData(search, filters);
+            console.log(data);
             setGames(data === null ? [] : data.games);
         }
     })
@@ -48,7 +54,7 @@ export function PageWrapper({ children }: PageWrapperProps) {
     useEffect(() => {
         FetchGames();
         console.log("Rerender Store");
-    }, [pages[0], filters, search]);
+    }, [pages[0], filters, search, refresh]);
 
     return (
         <div>

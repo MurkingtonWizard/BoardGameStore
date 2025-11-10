@@ -1,9 +1,9 @@
 import { IBoardGame } from "@/model";
 import { GameCard } from "./GameCard";
-import { ChildProps } from "./PageWrapper";
+import { ChildProps, RefreshProp } from "./PageWrapper";
 
-export function StorePage({boardGames, pages: [[currentPage = 0, maxPage], setPages]} : ChildProps) {
-
+export function StorePage({boardGames, pages: [[currentPage = 0, maxPage], setPages], onRefresh} : ChildProps & RefreshProp) {
+    
     return (
     <main className="pt-24 p-8">
         <h1 className="text-3xl font-bold mb-6">Browse Board Games</h1>
@@ -11,28 +11,7 @@ export function StorePage({boardGames, pages: [[currentPage = 0, maxPage], setPa
           {boardGames.map((game) => (
             <div key={game.id}>
               {/* Clicking card goes to detail page */}
-              <GameCard game={game}/>
-
-              {/* Add to Library button */}
-              <button
-                className="mt-3 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-                onClick={() => {
-                  const saved = localStorage.getItem("library");
-                  const current = saved ? JSON.parse(saved) : [];
-                  const exists = current.some(
-                    (g: IBoardGame) => g.id === game.id
-                  );
-                  if (!exists) {
-                    current.push(game);
-                    localStorage.setItem("library", JSON.stringify(current));
-                    alert(`${game.name} added to your library!`);
-                  } else {
-                    alert(`${game.name} is already in your library.`);
-                  }
-                }}
-              >
-                Add to Library
-              </button>
+              <GameCard game={game} onRefresh={onRefresh}/>
             </div>
           ))}
         </div>

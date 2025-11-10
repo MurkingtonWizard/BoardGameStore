@@ -23,3 +23,8 @@ export const Login = async (email: string, password: string): Promise<boolean> =
 		return false;
 	}
 }
+
+export const IsLoggedIn = () => {
+	let token = localStorage.getItem('token');
+	return token !== null ? true : false
+}
