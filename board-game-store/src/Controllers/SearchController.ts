@@ -47,9 +47,7 @@ export const FetchGameSearch = async (search: string, filters: Filters | null, c
             body: JSON.stringify(payload),
         });
         const resultData = await response.json();
-        console.log(resultData);
         if(resultData.statusCode == 200) {
-            console.log(resultData.body.games);
             return {
                 games: resultData.body.games as IBoardGame[],
                 total_pages: (resultData.body.total_games / 10 + 1)
