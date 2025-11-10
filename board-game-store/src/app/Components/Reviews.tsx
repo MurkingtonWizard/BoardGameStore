@@ -1,58 +1,100 @@
 "use client";
 import { useEffect, useState } from "react";
 
+interface Review {
+  user: string;
+  email: string;
+  text: string;
+}
+
 interface ReviewsProps {
   gameId: string | number;
 }
 
 export function Reviews({ gameId }: ReviewsProps) {
-  const [reviews, setReviews] = useState<{ user: string; text: string }[]>([]);
+  const [reviews, setReviews] = useState<Review[]>([]);
   const [newReview, setNewReview] = useState("");
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState(false);
 
   const API_URL =
     "https://gndbiwggpk.execute-api.us-east-2.amazonaws.com/Initial/Ratings";
-
   const token = localStorage.getItem("token");
 
-  // fetch all reviews for the game
-  useEffect(() => {
-    const fetchReviews = async () => {
-      setLoading(true);
-      try {
-        const res = await fetch(API_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            action: "getGameRatings",
-            gameId: gameId,
-          }),
-        });
+  /** decode the user's email from token */
+  const currentUserEmail = (() => {
+    if (!token) return null;
+    try {
+      const payload = JSON.parse(atob(token.split(".")[1]));
+      return payload.email as string;
+    } catch {
+      console.warn("Failed to decode token payload.");
+      return null;
+    }
+  })();
 
-        const data = await res.json();
-        const ratingsArray = data.body?.ratings || [];
+  /** fetch all reviews */
+  const fetchReviews = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "getGameRatings", gameId }),
+      });
 
-        const formatted = ratingsArray.map((r: any) => ({
+      const data = await res.json();
+      const ratings = data.body?.ratings || [];
+
+      const formatted = ratings
+        .filter((r: any) => r.text?.trim()) // only keep non-empty reviews
+        .map((r: any) => ({
           user: r.username || r.email,
-          text: r.text || "",
+          email: r.email,
+          text: r.text.trim(),
         }));
 
-        setReviews(formatted);
-      } catch (err) {
-        console.error("Error fetching reviews:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
+      setReviews(formatted);
+    } catch (err) {
+      console.error("Error fetching reviews:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchReviews();
   }, [gameId]);
 
-  // submit new review
+  /** delete the current user's review */
+  const handleDelete = async () => {
+    if (!token) {
+      alert("Please log in to delete your review.");
+      return;
+    }
 
-/*
+    try {
+      const res = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "deleteReview", gameId, token }),
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        console.log("Review deleted:", data);
+        await fetchReviews();
+      } else {
+        console.warn("Error deleting review:", data.error);
+      }
+    } catch (err) {
+      console.error("Network error deleting review:", err);
+    }
+  };
+
+  /** submit a new review */
   const handleSubmit = async () => {
     if (!newReview.trim()) return;
+
     if (!token) {
       alert("Please log in to submit a review.");
       return;
@@ -64,114 +106,29 @@ export function Reviews({ gameId }: ReviewsProps) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           action: "createOrUpdate",
-          gameId: gameId,
+          gameId,
           number_rating: null,
           text: newReview.trim(),
-          token: token, 
+          token,
         }),
       });
 
       const data = await res.json();
-      if (res.ok) {
-        console.log("Review submitted:", data);
 
-        // update UI 
-        setReviews((prev) => [
-          ...prev,
-          { user: "You", text: newReview.trim() },
-        ]);
+      if (res.ok && !data.error) {
+        console.log("Review submitted successfully");
         setNewReview("");
+        await fetchReviews();
+      } else if (
+        data.error?.includes("Missing valid rating") ||
+        data.error?.includes("Submit a rating first")
+      ) {
+        alert("Please rate this game before writing a review.");
       } else {
-        console.error("Error submitting review:", data.error);
+        alert("Failed to submit review. Please try again later.");
       }
     } catch (err) {
-      console.error("Network error:", err);
-    }
-  };
-*/
-const handleSubmit = async () => {
-  if (!newReview.trim()) return;
-  const token = localStorage.getItem("token");
-  if (!token) {
-    alert("Please log in to submit a review.");
-    return;
-  }
-
-  console.log("Submitting review:", {
-    gameId,
-    text: newReview.trim(),
-    token: token.substring(0, 20) + "...", // shorten for logs
-  });
-
-  try {
-    const res = await fetch(API_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        action: "createOrUpdate",
-        gameId: gameId,
-        number_rating: null,
-        text: newReview.trim(),
-        token: token,
-      }),
-    });
-
-    const textResponse = await res.text(); // read as text first
-    console.log("Raw Lambda response:", textResponse);
-
-    let data;
-    try {
-      data = JSON.parse(textResponse);
-    } catch {
-      console.error("Failed to parse JSON from Lambda:", textResponse);
-      return;
-    }
-
-    if (res.ok) {
-      console.log("Review submitted successfully:", data);
-      setReviews((prev) => [
-        ...prev,
-        { user: "You", text: newReview.trim() },
-      ]);
-      setNewReview("");
-    } else {
-      console.error("Error submitting review:", data.error);
-    }
-  } catch (err) {
-    console.error("Network error submitting review:", err);
-  }
-};
-
-  // delete a review
-  const handleDelete = async (reviewUser: string) => {
-    if (!token) {
-      alert("Please log in to delete your review.");
-      return;
-    }
-
-    try {
-      const res = await fetch(API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          action: "deleteReview",
-          gameId: gameId,
-          token: token, 
-        }),
-      });
-
-      const data = await res.json();
-      if (res.ok) {
-        console.log("Review deleted:", data);
-        // remove deleted review from UI
-        setReviews((prev) =>
-          prev.filter((r) => r.user !== "You" && r.user !== reviewUser)
-        );
-      } else {
-        console.error("Error deleting review:", data.error);
-      }
-    } catch (err) {
-      console.error("Network error deleting review:", err);
+      console.error("Network error submitting review:", err);
     }
   };
 
@@ -193,10 +150,9 @@ const handleSubmit = async () => {
                 <p className="text-gray-700 text-sm mt-1">{r.text}</p>
               </div>
 
-              {/* delete button — only visible for your own review */}
-              {r.user === "You" && (
+              {currentUserEmail === r.email && (
                 <button
-                  onClick={() => handleDelete(r.user)}
+                  onClick={handleDelete}
                   className="text-red-500 text-sm hover:text-red-700"
                   title="Delete review"
                 >

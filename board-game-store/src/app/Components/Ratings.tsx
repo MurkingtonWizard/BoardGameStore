@@ -3,11 +3,10 @@ import { useEffect, useState } from "react";
 
 interface RatingsProps {
   gameId: string | number;
-  userEmail?: string; // optional
+  onRatingChange?: () => void; 
 }
 
-
-export function Ratings({ gameId, userEmail }: RatingsProps) {
+export function Ratings({ gameId, onRatingChange }: RatingsProps) {
   const [rating, setRating] = useState<number>(0);
   const [hover, setHover] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
@@ -15,15 +14,6 @@ export function Ratings({ gameId, userEmail }: RatingsProps) {
     const API_URL = "https://gndbiwggpk.execute-api.us-east-2.amazonaws.com/Initial/Ratings";
 
     const token = localStorage.getItem("token");
-    console.log(localStorage.getItem("token"));
-    
-    if (!token || !userEmail) {
-      return (
-        <p className="text-gray-500 text-sm italic">
-          Please log in to rate this game.
-        </p>
-      );
-    }
 
   // fetch user's existing rating 
   useEffect(() => {
@@ -57,7 +47,7 @@ export function Ratings({ gameId, userEmail }: RatingsProps) {
     fetchUserRating();
   }, [token, gameId]);
 
-  //  handle star rating click
+  //  handle star rating 
   const handleClick = async (value: number) => {
     if (!token) {
       alert("Please log in to rate this game.");
@@ -82,6 +72,7 @@ export function Ratings({ gameId, userEmail }: RatingsProps) {
       const data = await res.json();
       if (res.ok) {
         console.log("Rating saved:", data);
+        if (onRatingChange) onRatingChange(); 
       } else {
         console.error("Error saving rating:", data.error);
       }
