@@ -1,32 +1,32 @@
 import { IsLoggedIn, UpdateOwnedGame } from "@/Controllers";
 import { useState } from "react";
 import { RefreshProp } from "./PageWrapper";
+import { useRouter } from "next/navigation";
 
 interface OwnedButtonProps {
-    boardGameID: number,
-    isOwned: boolean
+    ownedClick: (e: React.MouseEvent<HTMLButtonElement>) => void,
+    returnClick: (e: React.MouseEvent<HTMLButtonElement>) => void,
+    isOwned: boolean,
+    quantity: number
 }
 
-export function OwnedButton({boardGameID, isOwned, onRefresh}:OwnedButtonProps & RefreshProp) {
-    let ownedClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
-        e.stopPropagation();
-        if(!IsLoggedIn()) {
-            alert("Log in to use this feature");
-            return;
-        }
-        if(await UpdateOwnedGame(boardGameID, isOwned ? "remove" : "add")) {
-            onRefresh();
-        }
-    }
-
-    if(IsLoggedIn() && isOwned) {
+export function OwnedButton({ownedClick, returnClick, isOwned, quantity}:OwnedButtonProps) {
+        if(IsLoggedIn() && isOwned && quantity === 0) {
         return (
             <button className="mt-3 bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
                 type="button" onClick={ownedClick}>
-                Remove From Library
+                Remove
+            </button>
+        );
+    } else if (IsLoggedIn() && quantity !== 0) {
+        return (
+            <button className="mt-3 bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+                type="button" onClick={returnClick}>
+                Return
             </button>
         );
     }
+
 
     return (
         <button className="mt-3 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"

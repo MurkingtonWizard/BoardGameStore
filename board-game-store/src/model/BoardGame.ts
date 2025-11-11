@@ -22,6 +22,7 @@ export interface IBoardGame {
     family: string[],
     mechanics: string[],
     categories: string[],
-    owned: boolean
+    owned: boolean,
+    quantity: number,
 }
 

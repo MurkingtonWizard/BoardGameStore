@@ -3,12 +3,15 @@ import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
 import { Icon } from "./IconLibrary";
 import { HeaderProps } from "@/app/Components";
 import { Filters, DefaultFilter, } from "@/Controllers"
+import { useRouter, useSearchParams } from "next/navigation";
 
 
 export function SearchBar({
         search: [searchStr, setSearch],
         filter: [filters, setFilters],
         }: HeaderProps) {
+    const router = useRouter();
+    const searchParams = useSearchParams();
     const [internalSearch, setInternalSearch] = useState("");
     const [filtersOpen, setFiltersOpen] = useState(false);
 
@@ -34,10 +37,39 @@ export function SearchBar({
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, [filtersOpen]);
 
+    useEffect(() => {
+        if (!searchParams) return;
+        const params = Object.fromEntries(searchParams.entries());
+
+        const newSearch = params.search || "";
+        const newFilters: Filters = { ...DefaultFilter };
+        Object.keys(newFilters).forEach((key) => {
+            if (params[key]) newFilters[key as keyof Filters] = Number(params[key]);
+        });
+
+        setInternalSearch(newSearch);
+        setInternalFilters(newFilters);
+
+        setFilters(newFilters);
+        setSearch(newSearch);
+    }, [searchParams]);
+
     async function handleSearch(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
         setFilters(internalFilter);
         setSearch(internalSearch);
+        const query: Record<string, string> = {
+        search: internalSearch,
+        };
+
+        // Include filters in the URL
+        Object.entries(internalFilter).forEach(([key, val]) => {
+        query[key] = String(val);
+        });
+
+        // Push new URL without reloading
+        const queryString = new URLSearchParams(query).toString();
+        router.push(`?${queryString}`);
     }
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -47,7 +79,7 @@ export function SearchBar({
     return (
         <form className="search-bar" role="search" aria-label="Site search" onSubmit={handleSearch}>
             <div className="left">
-                <button className="link" ref={filterButtonRef} onClick={() => setFiltersOpen((v) => !v)}><Icon className="link" type="Filter" size="2em"/></button>
+                <button className="link" type="button" ref={filterButtonRef} onClick={() => setFiltersOpen((v) => !v)}><Icon className="link" type="Filter" size="2em"/></button>
                 <input
                     type="search"
                     id="site-search"

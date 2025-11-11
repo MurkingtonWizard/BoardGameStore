@@ -27,8 +27,9 @@ export const DefaultFilter: Filters = {
     minStoreScore: 1,
     maxStoreScore: 10,
 } 
+export type SearchContext = "library" | "store";
 
-export const FetchStoreData = async (search: string, filters: Filters | null, page: number): Promise<SearchResults> => {
+export const FetchGameSearch = async (search: string, filters: Filters | null, context: SearchContext, page: number=1): Promise<SearchResults> => {
     let token = localStorage.getItem('token'); // add token to search to toggle owned buttons
     if(filters === null) filters = DefaultFilter;
     const payload = {
@@ -36,6 +37,7 @@ export const FetchStoreData = async (search: string, filters: Filters | null, pa
         search,
         filters,
         page,
+        context
     };
     console.log("Searching for:", payload);
     try {
@@ -45,9 +47,7 @@ export const FetchStoreData = async (search: string, filters: Filters | null, pa
             body: JSON.stringify(payload),
         });
         const resultData = await response.json();
-        console.log(resultData);
         if(resultData.statusCode == 200) {
-            console.log(resultData.body.games);
             return {
                 games: resultData.body.games as IBoardGame[],
                 total_pages: (resultData.body.total_games / 10 + 1)
@@ -63,38 +63,5 @@ export const FetchStoreData = async (search: string, filters: Filters | null, pa
             games: [],
             total_pages: 0
         };
-    }
-}
-
-export const FetchLibraryData = async (search: string, filters: Filters | null): Promise<null | {games: IBoardGame[]}> => { 
-    let token = localStorage.getItem('token');
-    if (token === null) return null;
-    if(filters === null) filters = DefaultFilter;
-    const payload = {
-        token,
-        search,
-        filters,
-    };
-    console.log("Searching for:", payload);
-    try {
-        const response = await fetch('https://gndbiwggpk.execute-api.us-east-2.amazonaws.com/Initial/Library',
-        {
-            method: 'POST',
-            body: JSON.stringify(payload),
-        });
-        const resultData = await response.json();
-        console.log(resultData);
-        if(resultData.statusCode == 200) {
-            console.log(resultData.body.games);
-            return {
-                games: resultData.body.games as IBoardGame[],
-            };
-        }
-        return {
-            games: [],
-        };
-    } catch (error) {
-        console.error('Error fetching data:', error);
-        return null;
     }
 }
