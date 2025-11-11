@@ -28,13 +28,11 @@ export function Ratings({ gameId, onRatingChange }: RatingsProps) {
       alert("Please log in to rate this game.");
       return;
     }
-
-    setRating(value);
-    const newRating = await RateGame(gameId, "createOrUpdate", value);
-    setRating(newRating);
+    setRating(value); 
+    await RateGame(gameId, "createOrUpdate", value);
     if (onRatingChange) onRatingChange();
   };
-
+  
   return (
     <div className="flex items-center gap-1 mb-4">
       {loading ? (
