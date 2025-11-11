@@ -1,8 +1,9 @@
 "use client";
+import { RateGame } from "@/Controllers";
 import { useEffect, useState } from "react";
 
 interface RatingsProps {
-  gameId: string | number;
+  gameId: number;
   onRatingChange?: () => void; 
 }
 
@@ -11,74 +12,27 @@ export function Ratings({ gameId, onRatingChange }: RatingsProps) {
   const [hover, setHover] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
 
-    const API_URL = "https://gndbiwggpk.execute-api.us-east-2.amazonaws.com/Initial/Ratings";
-
-    const token = localStorage.getItem("token");
-
   // fetch user's existing rating 
   useEffect(() => {
-    const fetchUserRating = async () => {
-      if (!token) return; // only fetch if logged in
-      setLoading(true);
-
-      try {
-        const res = await fetch(API_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            action: "getUserRating",
-            gameId: gameId,
-            token: token, 
-          }),
-        });
-
-        const data = await res.json();
-
-        if (data.body?.number_rating) {
-          setRating(Number(data.body.number_rating));
-        }
-      } catch (err) {
-        console.error("Error fetching user rating:", err);
-      } finally {
-        setLoading(false);
-      }
+    const fetchRating = async () => {
+      const rating = await RateGame(gameId, "getUserRating");
+      setRating(rating);
     };
 
-    fetchUserRating();
-  }, [token, gameId]);
+    fetchRating();
+  }, [gameId]);
 
   //  handle star rating 
   const handleClick = async (value: number) => {
-    if (!token) {
+    if (!localStorage.getItem('token')) {
       alert("Please log in to rate this game.");
       return;
     }
 
     setRating(value);
-
-    try {
-      const res = await fetch(API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          action: "createOrUpdate",
-          gameId: gameId,
-          number_rating: value,
-          text: null, 
-          token: token, 
-        }),
-      });
-
-      const data = await res.json();
-      if (res.ok) {
-        console.log("Rating saved:", data);
-        if (onRatingChange) onRatingChange(); 
-      } else {
-        console.error("Error saving rating:", data.error);
-      }
-    } catch (err) {
-      console.error("Network error saving rating:", err);
-    }
+    const newRating = await RateGame(gameId, "createOrUpdate", value);
+    setRating(newRating);
+    if (onRatingChange) onRatingChange();
   };
 
   return (
