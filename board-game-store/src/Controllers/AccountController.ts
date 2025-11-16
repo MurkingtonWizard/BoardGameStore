@@ -47,3 +47,29 @@ export const IsLoggedIn = () => {
 	let token = localStorage.getItem('token');
 	return token !== null ? true : false
 }
+
+export const GetAccountInfo = async () => {
+	if (!IsLoggedIn()) return null;
+
+	try {
+		const response = await fetch("https://gndbiwggpk.execute-api.us-east-2.amazonaws.com/Initial/AccountInfo", {
+			method: "POST",
+			body: JSON.stringify({
+				token: localStorage.getItem("token")
+			})
+		});
+
+		const result = await response.json();
+		if (result.statusCode !== 200) return null;
+
+		return result.body;
+
+	} catch (err) {
+		console.log("AccountInfo error:", err);
+		return null;
+	}
+};
+
+export const Logout = () => {
+	localStorage.removeItem("token");
+};
