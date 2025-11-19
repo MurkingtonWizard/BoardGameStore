@@ -84,9 +84,9 @@ export default function GameDetailPage() {
           <p className="text-gray-600 mb-4">{game.description}</p>
 
           <div className="grid grid-cols-2 gap-x-8 gap-y-3 text-base leading-relaxed">
-            <p>
+            {game.price && <p>
               <strong>Price:</strong> ${game.price.toFixed(2)}
-            </p>
+            </p>}
             <p>
               <strong>Players:</strong> {game.min_players}–{game.max_players}
             </p>

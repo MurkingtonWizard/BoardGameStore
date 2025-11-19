@@ -17,6 +17,8 @@ interface PageWrapperProps {
 }
 
 export function PageWrapper({ children }: PageWrapperProps) {
+    const [prevSearch, setPrevSearch] = useState("");
+    const [prevFilters, setPrevFilters] = useState(DefaultFilter);
     const [search, setSearch] = useState("");
     const [filters, setFilters] = useState(DefaultFilter);
     const [pages, setPages] = useState<[number, number]>([1,0]);
@@ -40,6 +42,11 @@ export function PageWrapper({ children }: PageWrapperProps) {
         const currentFetch = ++fetchIndex.current; // increment generation
         console.log("Fetching index:", currentFetch);
 		if (type === "signup") return;
+
+        if(search !== prevSearch || filters !== prevFilters) {
+            setPages([1, 0])
+        }
+
         try {
             let data;
             if (type === "store") {
@@ -55,6 +62,8 @@ export function PageWrapper({ children }: PageWrapperProps) {
                 } else {
                     setGames(data.games || []);
                 }
+                setPrevSearch(search)
+                setPrevFilters(filters)
             } else {
                 console.log("Ignored outdated fetch", currentFetch);
             }
