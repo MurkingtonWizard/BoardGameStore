@@ -12,7 +12,7 @@ export interface RefreshProp {
     onRefresh: () => void; 
 }
 export type PageType = "store" | "library" | "other";
-type AllowedChildPage = ReactElement<typeof StorePage> | ReactElement<typeof LibraryPage> | ReactElement<typeof Signup>;
+type AllowedChildPage = ReactElement<typeof StorePage> | ReactElement<typeof LibraryPage> | ReactElement<any>;
 interface PageWrapperProps {
   children: (props: ChildProps & RefreshProp) => AllowedChildPage;
 }

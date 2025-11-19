@@ -1,6 +1,7 @@
 import { IBoardGame } from "@/model";
 import { GameCard } from "./GameCard";
 import { ChildProps, RefreshProp } from "./PageWrapper";
+import { PageNumber } from "./PageNumber";
 
 export function StorePage({boardGames, pages: [[currentPage = 0, maxPage], setPages], onRefresh} : ChildProps & RefreshProp) {
     
@@ -15,24 +16,7 @@ export function StorePage({boardGames, pages: [[currentPage = 0, maxPage], setPa
             </div>
           ))}
         </div>
-        {boardGames.length === 0 ? <p className="text-gray-500">No results.</p> : (
-        <div className="page-row">
-          {Array.from({ length: maxPage }, (_, i) => i + 1).map((pageNumber, index, arr) => (
-            <div key={pageNumber} className="page-link">
-              <a
-                href="#"
-                onClick={(e) => {
-                  e.preventDefault();
-                  setPages([pageNumber, maxPage]);
-                }}
-                className={currentPage === pageNumber ? 'active' : ''}
-              >
-                {pageNumber}
-              </a>
-              {index < arr.length - 1 && <span>,</span>}
-            </div>
-          ))}
-        </div>)}
+        <PageNumber boardGames={boardGames} pages={[[currentPage, maxPage], setPages]} onRefresh={onRefresh}/>
       </main>
     );
 }
