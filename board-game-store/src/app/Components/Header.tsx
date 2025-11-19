@@ -22,6 +22,7 @@ export function Header({
             <SearchBar search={search} filter={filter}/>
             <Link href={"/account"} className="link"><Icon type="Account" size="2em"/></Link>
 			<button type = "button" onClick = {async () => Login("test@test.com", "password")}>Login Test</button>
+            <Link href={"/checkout"} className="link"><Icon type="ShoppingCart" size="2em"/></Link>
         </nav>
     </header>
     );

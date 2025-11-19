@@ -1,73 +1,120 @@
 import { IReturn, ITransaction } from "@/model";
 import { IsLoggedIn } from "./AccountController";
 
-export type OwnedAction = "add" | "remove";
+const API_BASE = "https://gndbiwggpk.execute-api.us-east-2.amazonaws.com/Initial";
 
-export const UpdateOwnedGame = async (boardGameID: number, action: OwnedAction): Promise<boolean> => {
-    let token = localStorage.getItem('token');
-    if(token === null) return false;
-    // check token exists
-    const payload = {
-        "token" : token,
-        "gameId" : boardGameID,
-        "update" : action
-    };
+/** Safely gets the JWT token or returns null */
+const getToken = (): string | null => {
+    return localStorage.getItem("token");
+};
+
+/** Shared fetch wrapper */
+const post = async (path: string, payload: any) => {
     try {
-        const response = await fetch('https://gndbiwggpk.execute-api.us-east-2.amazonaws.com/Initial/Owned',
-        {
-            method: 'POST',
-            body: JSON.stringify(payload),
+        const response = await fetch(`${API_BASE}/${path}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(payload)
         });
-        const resultData = await response.json();
-        return resultData.statusCode === 200;
-    } catch (error) {
-        console.error('Error fetching data:', error);
+
+        return await response.json();
+    } catch (err) {
+        console.error(`POST ${path} failed:`, err);
+        return { statusCode: 500, error: "Fetch error" };
+    }
+};
+
+/* -------------------------------------------------------------------------- */
+/*                              UpdateOwnedGame                               */
+/* -------------------------------------------------------------------------- */
+
+export const UpdateOwnedGame = async (
+    boardGameID: number, 
+    action: "add" | "remove"
+): Promise<boolean> => {
+
+    const token = getToken();
+    if (!token) {
+        console.error("UpdateOwnedGame: No token found");
         return false;
     }
-}
 
-export const CreateTransaction = async (transactions: {boardGameID: number, quantity: number}[]): Promise<ITransaction | boolean> => {
-    if(!IsLoggedIn) return false;
     const payload = {
-        "token" : localStorage.getItem('token'),
+        token,
+        gameId: boardGameID,
+        update: action
+    };
+
+    const result = await post("Owned", payload);
+    return result.statusCode === 200;
+};
+
+/* -------------------------------------------------------------------------- */
+/*                             CreateTransaction                              */
+/* -------------------------------------------------------------------------- */
+
+export const CreateTransaction = async (
+    transactions: { boardGameID: number; quantity: number }[]
+): Promise<ITransaction | null> => {
+
+    if (!IsLoggedIn()) {
+        console.error("CreateTransaction: User not logged in");
+        return null;
+    }
+
+    const token = getToken();
+    if (!token) {
+        console.error("CreateTransaction: Missing token");
+        return null;
+    }
+
+    const payload = {
+        token,
         transactions
     };
-    try {
-        const response = await fetch('https://gndbiwggpk.execute-api.us-east-2.amazonaws.com/Initial/Transaction',
-        {
-            method: 'POST',
-            body: JSON.stringify(payload),
-        });
-        const resultData = await response.json();
-        if(resultData.statusCode === 200) {
-            return resultData.body;
-        }
-        return false;
-    } catch (error) {
-        console.error('Error fetching data:', error);
-        return false;
-    }
-}
 
-export const CreateReturn = async (transaction: {boardGameID: number, quantity: number}): Promise<IReturn | boolean> => {
-    if(!IsLoggedIn) return false;
+    const result = await post("Transaction", payload);
+
+    if (result.statusCode === 200) {
+        return result.body as ITransaction;
+    }
+
+    console.error("Transaction failed:", result);
+    return null;
+};
+
+/* -------------------------------------------------------------------------- */
+/*                               CreateReturn                                 */
+/* -------------------------------------------------------------------------- */
+
+export const CreateReturn = async (
+    transaction: { boardGameID: number; quantity: number }
+): Promise<IReturn | null> => {
+
+    if (!IsLoggedIn()) {
+        console.error("CreateReturn: User not logged in");
+        return null;
+    }
+
+    const token = getToken();
+    if (!token) {
+        console.error("CreateReturn: Missing token");
+        return null;
+    }
+
     const payload = {
-        "token" : localStorage.getItem('token'),
+        token,
         transaction
     };
-    try {
-        const response = await fetch('https://gndbiwggpk.execute-api.us-east-2.amazonaws.com/Initial/Return',
-        {
-            method: 'POST',
-            body: JSON.stringify(payload),
-        });
-        const resultData = await response.json();
-        if(resultData.statusCode === 200) {
-            return resultData.body;
-        }
-        return false;
-    } catch (error) {
-        console.error('Error fetching data:', error);
-        return false;
+
+    const result = await post("Return", payload);
+
+    if (result.statusCode === 200) {
+        return result.body as IReturn;
     }
-}
+
+    console.error("Return failed:", result);
+    return null;
+};

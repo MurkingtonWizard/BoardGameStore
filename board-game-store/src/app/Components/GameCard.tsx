@@ -26,6 +26,36 @@ export function GameCard({ game, onRefresh }: {game: IBoardGame} & RefreshProp) 
         onRefresh();
     }
   }
+  let addToCart = async (e: React.MouseEvent<HTMLButtonElement>) => {
+  e.stopPropagation();
+  if (!IsLoggedIn()) {
+    alert("Log in to use this feature");
+    return;
+  }
+
+  // Read existing cart from localStorage
+  const existingRaw = localStorage.getItem("checkoutGames");
+  let existingCart = [];
+  if (existingRaw) {
+    try {
+      existingCart = JSON.parse(existingRaw);
+      if (!Array.isArray(existingCart)) existingCart = [existingCart];
+    } catch {
+      existingCart = [];
+    }
+  }
+
+  // Add new game if not already in the cart
+  if (!existingCart.some((g: any) => g.id === game.id)) {
+    existingCart.push(game);
+  }
+
+  // Save back to localStorage
+  localStorage.setItem("checkoutGames", JSON.stringify(existingCart));
+
+  console.log("Button pressed to add to cart");
+};
+
   let returnClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     if(!IsLoggedIn()) {
@@ -59,6 +89,7 @@ export function GameCard({ game, onRefresh }: {game: IBoardGame} & RefreshProp) 
       <p className="text-sm text-gray-500 mt-2">
         {game.description.slice(0, 60)}...
       </p>
+      <button className="mt-3 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700" type = "button" onClick = {addToCart}>Add to cart</button>
     </div>
     
   );
