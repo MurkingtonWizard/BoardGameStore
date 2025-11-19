@@ -11,10 +11,12 @@ export interface ChildProps {
 export interface RefreshProp {
     onRefresh: () => void; 
 }
+export type PageType = "store" | "library" | "other";
 type AllowedChildPage = ReactElement<typeof StorePage> | ReactElement<typeof LibraryPage> | ReactElement<typeof Signup>;
 interface PageWrapperProps {
   children: (props: ChildProps & RefreshProp) => AllowedChildPage;
 }
+
 
 export function PageWrapper({ children }: PageWrapperProps) {
     const [prevSearch, setPrevSearch] = useState("");
@@ -32,16 +34,15 @@ export function PageWrapper({ children }: PageWrapperProps) {
         onRefresh: () => { setRefresh(refresh === 1 ? 0 : 1); }, 
     });
 
-    const type: "store" | "library" | "signup" | "unknown" = 
+    const type: PageType = 
         child.type === StorePage ? "store" :
         child.type === LibraryPage ? "library" :
-		child.type === Signup ? "signup":
-        "unknown";
+        "other";
 
     const FetchGames = (async () => {
         const currentFetch = ++fetchIndex.current; // increment generation
         console.log("Fetching index:", currentFetch);
-		if (type === "signup") return;
+		if (type === "other") return;
 
         if(search !== prevSearch || filters !== prevFilters) {
             setPages([1, 0])
@@ -78,7 +79,7 @@ export function PageWrapper({ children }: PageWrapperProps) {
 
     return (
         <div>
-            <Header search={[search, setSearch]} filter={[filters, setFilters]}/>
+            <Header search={[search, setSearch]} filter={[filters, setFilters]} pageType={type}/>
             {child}
             <Footer/>
         </div>

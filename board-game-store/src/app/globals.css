@@ -43,6 +43,12 @@ button {
   transition: padding 0.3s ease, height 0.3s ease;
 }
 
+.header-group {
+  display: flex;
+  flex-direction: row;
+  gap: 3rem;
+}
+
 .search-bar {
   position: relative; /* enables dropdown positioning */
   display: flex;

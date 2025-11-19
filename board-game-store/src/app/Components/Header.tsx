@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { Icon, SearchBar } from "@/app/Components"
-import { Filters, DefaultFilter, Login } from "@/Controllers"
+import { Icon, PageType, SearchBar } from "@/app/Components"
+import { Filters, DefaultFilter, Login, IsLoggedIn } from "@/Controllers"
 
 
 
@@ -12,17 +12,22 @@ export type HeaderProps = {
 export function Header({
         search,
         filter,
-        }: HeaderProps) {
+        pageType,
+        }: HeaderProps & {
+            pageType: PageType
+        }) {
 
     return (
     <header>
         <nav className="header">
-            <Link href={"/"} className="link"><Icon type="Home" size="2em"/></Link>
-            <Link href={"/library"} className="link"><Icon type="Library" size="2em"/></Link>
-            <SearchBar search={search} filter={filter}/>
-            <Link href={"/account"} className="link"><Icon type="Account" size="2em"/></Link>
-			<button type = "button" onClick = {async () => Login("test@test.com", "password")}>Login Test</button>
-			<Link href={"/register"} className="link">Register</Link>
+            <div className="header-group">
+                <Link href={"/"} className="link"><Icon type="Home" size="2em"/></Link>
+                <Link href={"/library"} className="link"><Icon type="Library" size="2em"/></Link>
+            </div>
+            {pageType !== "other" && (
+                <SearchBar search={search} filter={filter}/>
+            )}
+            <Link href={IsLoggedIn() ? "/account" : "/register"} className="link"><Icon type="Account" size="2em"/></Link>
         </nav>
     </header>
     );
