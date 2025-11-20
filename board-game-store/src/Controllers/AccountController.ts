@@ -24,6 +24,28 @@ export const Login = async (email: string, password: string): Promise<boolean> =
 	}
 }
 
+export const Register = async(email: string, username: string, password: string): Promise<boolean> => {
+	try {
+		const userResponse = await fetch("https://gndbiwggpk.execute-api.us-east-2.amazonaws.com/Initial/Signup", {
+			method: 'POST',
+			body: JSON.stringify({
+				"email": email,
+				"password": password,
+				"username": username
+			})
+		});
+		const resultData = await userResponse.json();
+		if (resultData.statusCode != 200) {
+			throw new Error("Could not create account!");
+		}
+		return true;
+	} catch (err) {
+		console.log("Account creation error:", err);
+		return false;
+	}
+
+}
+
 export const RecordFunds = async (amount: number): Promise<boolean> => {
 	if(!IsLoggedIn()) return false;
 	try {

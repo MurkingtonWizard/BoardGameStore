@@ -50,7 +50,7 @@ export const FetchGameSearch = async (search: string, filters: Filters | null, c
         if(resultData.statusCode == 200) {
             return {
                 games: resultData.body.games as IBoardGame[],
-                total_pages: (resultData.body.total_games / 10 + 1)
+                total_pages: (resultData.body.total_games / 12 + 1)
             };
         }
         return {

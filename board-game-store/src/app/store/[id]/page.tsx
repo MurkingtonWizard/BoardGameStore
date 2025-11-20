@@ -83,16 +83,41 @@ export default function GameDetailPage() {
           <p className="text-gray-600 mb-4">{game.description}</p>
 
           <div className="grid grid-cols-2 gap-x-8 gap-y-3 text-base leading-relaxed">
-            <p><strong>Price:</strong> ${game.price.toFixed(2)}</p>
-            <p><strong>Players:</strong> {game.min_players}–{game.max_players}</p>
-            <p><strong>Playtime:</strong> {game.playtime} min</p>
-            <p><strong>Min Playtime:</strong> {game.min_playtime} min</p>
-            <p><strong>Max Playtime:</strong> {game.max_playtime} min</p>
-            <p><strong>Age:</strong> {game.min_age}+</p>
-            <p><strong>BGG Score:</strong> {game.average_user_score}</p>
-            <p><strong>Rank:</strong> #{game.rank}</p>
 
-            {/* Store Page Rating */}
+            {game.price && <p>
+              <strong>Price:</strong> ${game.price.toFixed(2)}
+            </p>}
+            <p>
+              <strong>Players:</strong> {game.min_players}–{game.max_players}
+            </p>
+            <p>
+              <strong>Playtime:</strong> {game.playtime} min
+            </p>
+            <p>
+              <strong>Min Playtime:</strong> {game.min_playtime} min
+            </p>
+            <p>
+              <strong>Max Playtime:</strong> {game.max_playtime} min
+            </p>
+            <p>
+              <strong>Age:</strong> {game.min_age}+
+            </p>
+            <p>
+              <strong>BGG Score:</strong> {game.BGG_score}
+            </p>
+            <p>
+              <strong>Average User Rating:</strong> {game.average_user_score}
+            </p>
+            {game.users_rated && (
+              <p>
+                <strong>Users Rated:</strong>{" "}
+                {game.users_rated.toLocaleString()}
+              </p>
+            )}
+            <p>
+              <strong>Rank:</strong> #{game.rank}
+            </p>
+
             <p>
               <strong>Store Page Rating:</strong>{" "}
               {loadingRating
