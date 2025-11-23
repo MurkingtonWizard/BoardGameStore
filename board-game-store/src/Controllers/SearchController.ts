@@ -47,8 +47,9 @@ export const FetchGameSearch = async (search: string, filters: Filters | null, c
         });
         const resultData = await response.json();
         if(resultData.statusCode == 200) {
+            const games: IBoardGame[] = resultData.body.games.map(MapToBoardGame);
             return {
-                games: resultData.body.games as IBoardGame[],
+                games: games,
                 total_pages: Math.ceil(resultData.body.total_games / 12)
             };
         }
@@ -63,4 +64,34 @@ export const FetchGameSearch = async (search: string, filters: Filters | null, c
             total_pages: 0
         };
     }
+}
+
+function MapToBoardGame(g: any): IBoardGame {
+    return {
+        id: g.id,
+        name: g.name,
+        description: g.description,
+        year_published: g.year_published,
+        min_players: g.min_players,
+        max_players: g.max_players,
+        min_age: g.min_age,
+        min_playtime: g.min_play_time,   // snake_case → camelCase
+        max_playtime: g.max_play_time,   // snake_case → camelCase
+        playtime: g.playing_time,        // snake_case → camelCase
+        thumbnail: g.thumbnail,
+        url: g.url,
+        price: g.price,
+        BGG_score: g.bayes_average_user_score,
+        users_rated: g.users_rate,
+        average_user_score: g.average_user_score,
+        rank: g.game_rank,
+        store_page_rating: g.store_page_rating,
+        implementations: [], // API doesn’t provide, default empty
+        expansions: [],       // API doesn’t provide, default empty
+        family: [],           // API doesn’t provide, default empty
+        mechanics: [],        // API doesn’t provide, default empty
+        categories: [],       // API doesn’t provide, default empty
+        owned: Boolean(g.owned),
+        quantity: g.quantity ?? 0,
+    };
 }

@@ -16,6 +16,7 @@ export default function GameDetailPage() {
 
   useEffect(() => {
     const storedGame = localStorage.getItem("selectedGame");
+    console.log(storedGame)
     if (storedGame) {
       const parsed = JSON.parse(storedGame);
       if (String(parsed.id) === String(id)) {
@@ -91,14 +92,13 @@ export default function GameDetailPage() {
               <strong>Players:</strong> {game.min_players}–{game.max_players}
             </p>
             <p>
-              <strong>Playtime:</strong> {game.playtime} min
+              <strong>Average Playtime:</strong> {game.playtime} min
             </p>
-            <p>
-              <strong>Min Playtime:</strong> {game.min_playtime} min
-            </p>
-            <p>
-              <strong>Max Playtime:</strong> {game.max_playtime} min
-            </p>
+            {game.min_playtime < game.max_playtime &&
+              <p>
+                <strong>Playtime:</strong> {game.min_playtime} min - {game.max_playtime} min
+              </p>
+            }
             <p>
               <strong>Age:</strong> {game.min_age}+
             </p>
