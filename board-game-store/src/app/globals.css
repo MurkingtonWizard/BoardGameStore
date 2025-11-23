@@ -268,14 +268,40 @@ button {
   color: #444;
   line-height: 1.4;
 }
+.gameCard {
+  position: relative; /* needed for absolute buttons */
+  padding: 1rem;      /* p-4 */
+  border: 1px solid #e5e7eb; /* light border */
+  border-radius: 1rem; /* rounded-xl */
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  cursor: pointer;
+  transition: box-shadow 0.2s ease;
+}
 
+.gameCard:hover {
+  box-shadow: 0 8px 12px rgba(0,0,0,0.15);
+}
+
+.imageContainer {
+  position: relative;
+  width: 100%;
+  height: 12rem; /* matches h-48 */
+}
+
+.buttonGroup {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
 /* Quantity Counter */
 .quantityCount {
   display: flex;
   flex-direction: row;
   align-items: center;
   gap: 0.2rem;
-  margin-top: 0.5rem;
 }
 
 .quantityCount button,
@@ -331,4 +357,31 @@ button {
   background-color: #00975f;
   transform: scale(1.025);
 }
+
+.checkoutButton {
+  padding: 0.5rem 1rem;       /* vertical | horizontal */
+  background-color: #16a34a;  /* green-600 */
+  color: white;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  display: inline-block;      /* only as wide as content */
+}
+
+.checkoutButton:hover:not(:disabled) {
+  background-color: #15803d; /* green-700 */
+}
+
+.checkoutButton:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* optional: full-width variant */
+.checkoutButtonFull {
+  width: 100%;
+}
+
 

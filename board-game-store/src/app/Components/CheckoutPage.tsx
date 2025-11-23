@@ -4,50 +4,33 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { CreateTransaction, GetAccountInfo, IsLoggedIn } from "@/Controllers";
 import { Icon } from "./IconLibrary";
-
-type CartGame = {
-  id: string;
-  title?: string;
-  name?: string;
-  price?: number;
-};
+import { QuantityCount } from "./QuantityCount";
+import { IBoardGame } from "@/model";
 
 type CheckoutItemProps = {
-  game: { id: string; title: string; price?: number };
-  quantity: number;
-  setQuantity: (n: number) => void;
+  game: { id: number; title: string; price: number };
+  amount: [number, React.Dispatch<React.SetStateAction<number>>]
+  balance: number,
   onRemove: () => void;
   onCheckout: () => void;
 };
 
-function CheckoutItem({ game, quantity, setQuantity, onRemove, onCheckout }: CheckoutItemProps) {
+function CheckoutItem({ game, amount: [quantity, setQuantity], balance, onRemove, onCheckout }: CheckoutItemProps) {
+  const [canCheckout, setCanCheckout] = useState(true)
+
+  useEffect(()=>{
+    setCanCheckout(balance >= game.price*quantity)
+  }, [quantity, balance])
+  
   return (
     <div className="flex items-center justify-between gap-4 p-4 border-b border-gray-200">
       <div className="flex-1 text-lg font-semibold">{game.title}</div>
-
-      <div className="flex items-center gap-2">
-        <button
-          onClick={() => setQuantity(Math.max(1, quantity - 1))}
-          className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 font-bold"
-        >
-          -
-        </button>
-
-        <button className="px-4 py-1 bg-blue-600 text-white rounded font-bold hover:bg-blue-700">
-          Quantity: {quantity}
-        </button>
-
-        <button
-          onClick={() => setQuantity(quantity + 1)}
-          className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 font-bold"
-        >
-          +
-        </button>
-      </div>
-
+      <p>${(game.price * quantity).toFixed(2)}</p>
+      <QuantityCount amount={[quantity, setQuantity]} max={99}/>
       <button
         onClick={onCheckout}
-        className="px-4 py-1 bg-green-600 text-white rounded hover:bg-green-700 font-semibold"
+        className="checkoutButton"
+        disabled={!canCheckout}
       >
         Checkout
       </button>
@@ -59,37 +42,47 @@ function CheckoutItem({ game, quantity, setQuantity, onRemove, onCheckout }: Che
   );
 }
 
-export default function CheckoutPage() {
+export function CheckoutPage() {
   const router = useRouter();
-  const [games, setGames] = useState<CartGame[]>([]);
+  const [games, setGames] = useState<IBoardGame[]>([]);
   const [quantities, setQuantities] = useState<number[]>([]);
   const [balance, setBalance] = useState<number>(0);
+  const [canCheckout, setCanCheckout] = useState(true)
+
+
+  const totalCost = () => {
+    return games.reduce((sum, game, index) => {
+      const quantity = quantities[index] ?? 0; 
+      return sum + game.price * quantity;
+    }, 0);
+  }
+
+  useEffect(()=>{
+    setCanCheckout(balance >= totalCost())
+  }, [quantities, balance])
 
   // Load cart and balance
   useEffect(() => {
-    // Load cart from localStorage
-    const rawMulti = localStorage.getItem("checkoutGames");
-    const rawSingle = localStorage.getItem("cartGame");
-    let cart: CartGame[] = [];
+    const storedCart = localStorage.getItem("checkoutGames");
+    let cart: IBoardGame[] = [];
 
-    if (rawMulti) {
+    if (storedCart) {
       try {
-        const parsed = JSON.parse(rawMulti);
-        if (Array.isArray(parsed)) cart = parsed.map(g => ({ ...g, price: Number(g.price ?? 0) }));
-      } catch {}
+        const parsed = JSON.parse(storedCart) as any[];
+        cart = parsed.map(g => ({
+          ...g,
+          price: Number(g.price ?? 0), // ensure price is number
+        }));
+      } catch (err) {
+        console.error("Failed to parse checkoutGames from localStorage:", err);
+      }
     }
 
-    if (rawSingle) {
-      try {
-        const parsed = JSON.parse(rawSingle);
-        const gamePrice = Number(parsed.price ?? 0);
-        if (!cart.some(g => g.id === parsed.id)) cart.push({ ...parsed, price: gamePrice });
-      } catch {}
-    }
-
-    localStorage.setItem("checkoutGames", JSON.stringify(cart));
     setGames(cart);
     setQuantities(cart.map(() => 1));
+
+    // Save normalized cart back to localStorage
+    localStorage.setItem("checkoutGames", JSON.stringify(cart));
 
     // Load account balance
     const loadBalance = async () => {
@@ -100,15 +93,7 @@ export default function CheckoutPage() {
     loadBalance();
   }, []);
 
-  const setQuantityAt = (index: number, value: number) => {
-    setQuantities(prev => {
-      const copy = [...prev];
-      copy[index] = value;
-      return copy;
-    });
-  };
-
-  const removeAt = (index: number) => {
+  const removeGameAt = (index: number) => {
     const newGames = [...games];
     newGames.splice(index, 1);
     setGames(newGames);
@@ -126,19 +111,19 @@ export default function CheckoutPage() {
     const cost = Math.round((game.price ?? 0) * quantity * 100) / 100;
 
     if (cost > balance) {
-      alert(`Insufficient funds to checkout ${game.title} x${quantity}`);
+      alert(`Insufficient funds to checkout ${game.name} x${quantity}`);
       return;
     }
 
     const result = await CreateTransaction([{ boardGameID: Number(game.id), quantity }]);
     if (result) {
-      alert(`Checkout successful: ${game.title} x${quantity}`);
-      removeAt(index);
+      alert(`Checkout successful: ${game.name} x${quantity}`);
+      removeGameAt(index);
 
       const info = await GetAccountInfo();
       if (info) setBalance(Number(info.funds));
     } else {
-      alert(`Checkout failed for ${game.title}`);
+      alert(`Checkout failed for ${game.name}`);
     }
   };
 
@@ -162,7 +147,7 @@ export default function CheckoutPage() {
       setGames([]);
       setQuantities([]);
       localStorage.removeItem("checkoutGames");
-      localStorage.removeItem("cartGame");
+      router.push("/");
 
       const info = await GetAccountInfo();
       if (info) setBalance(Number(info.funds));
@@ -170,10 +155,6 @@ export default function CheckoutPage() {
       alert("Checkout failed. Please try again.");
     }
   };
-
-  const totalCost = Math.round(games.reduce((sum, g, i) => sum + (g.price ?? 0) * quantities[i], 0) * 100) / 100;
-
-  const isInsufficient = totalCost > balance;
 
   return (
     <div className="p-6 max-w-3xl mx-auto">
@@ -185,10 +166,9 @@ export default function CheckoutPage() {
           <span className="text-gray-700 font-medium">Balance: ${balance.toFixed(2)}</span>
           <button
             onClick={() => router.push("/")}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 font-semibold"
+            className="mt-3 ml-3 border border-gray-400 text-gray-700 px-4 py-2 rounded hover:bg-gray-100"
           >
-            <Icon type="Account" className="w-5 h-5" />
-            Back to Store
+            ← Back to Store
           </button>
         </div>
       </div>
@@ -197,24 +177,35 @@ export default function CheckoutPage() {
         <p className="text-gray-500">No items in cart.</p>
       ) : (
         <>
-          {games.map((game, i) => (
-            <CheckoutItem
+          {games.map((game, i) => {
+            const amount: [number, React.Dispatch<React.SetStateAction<number>>] = [
+              quantities[i],
+              (newValue) => {
+                setQuantities(prev => {
+                  const updated = [...prev];
+                  updated[i] = typeof newValue === 'function' ? newValue(prev[i]) : newValue;
+                  return updated;
+                });
+              }
+            ];
+
+            return <CheckoutItem
               key={game.id}
-              game={{ id: game.id, title: game.title ?? game.name ?? "Untitled", price: game.price }}
-              quantity={quantities[i]}
-              setQuantity={n => setQuantityAt(i, n)}
-              onRemove={() => removeAt(i)}
+              game={{ id: game.id, title: game.name ?? game.name ?? "Untitled", price: game.price }}
+              amount={amount}
+              balance={balance}
+              onRemove={() => removeGameAt(i)}
               onCheckout={() => checkoutItem(i)}
             />
-          ))}
+          })}
 
           {/* Total Cost */}
           <div className="mt-4 text-right text-lg font-semibold">
             Total Cost:{" "}
-            <span className={isInsufficient ? "text-red-600" : "text-gray-800"}>
-              ${totalCost.toFixed(2)}
+            <span className={!canCheckout ? "text-red-600" : "text-gray-800"}>
+              ${totalCost().toFixed(2)}
             </span>
-            {isInsufficient && (
+            {!canCheckout && (
               <span className="ml-2 text-red-500 font-medium">(Insufficient funds)</span>
             )}
           </div>
@@ -222,7 +213,8 @@ export default function CheckoutPage() {
           {/* Checkout All button */}
           <button
             onClick={checkoutAll}
-            className="mt-6 w-full py-3 bg-green-600 text-white rounded hover:bg-green-700 font-semibold"
+            className="checkoutButton checkoutButtonFull"
+            disabled={!canCheckout}
           >
             Checkout All
           </button>
