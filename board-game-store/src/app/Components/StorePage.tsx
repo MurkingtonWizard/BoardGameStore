@@ -3,7 +3,7 @@ import { GameCard } from "./GameCard";
 import { ChildProps, RefreshProp } from "./PageWrapper";
 import { PageNumber } from "./PageNumber";
 
-export function StorePage({boardGames, pages: [[currentPage = 0, maxPage], setPages], onRefresh} : ChildProps & RefreshProp) {
+export function StorePage({boardGames, maxPage, onRefresh} : ChildProps & RefreshProp) {
     
     return (
     <main className="pt-24 p-8">
@@ -16,7 +16,7 @@ export function StorePage({boardGames, pages: [[currentPage = 0, maxPage], setPa
             </div>
           ))}
         </div>
-        <PageNumber boardGames={boardGames} pages={[[currentPage, maxPage], setPages]} onRefresh={onRefresh}/>
+        <PageNumber boardGames={boardGames} maxPage={maxPage}/>
       </main>
     );
 }

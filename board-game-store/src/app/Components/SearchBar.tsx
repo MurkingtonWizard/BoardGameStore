@@ -7,8 +7,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 
 
 export function SearchBar({
-        search: [searchStr, setSearch],
-        filter: [filters, setFilters],
         }: HeaderProps) {
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -37,6 +35,20 @@ export function SearchBar({
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, [filtersOpen]);
 
+    const updateSearchURL = () => {
+        const query: Record<string, string> = {
+            search: internalSearch,
+        };
+
+        // Include filters in the URL
+        Object.entries(internalFilter).forEach(([key, val]) => {
+            query[key] = String(val);
+        });
+
+        // Push new URL without reloading
+        const queryString = new URLSearchParams(query).toString();
+        router.push(`?${queryString}`);
+    }
     useEffect(() => {
         if (!searchParams) return;
         const params = Object.fromEntries(searchParams.entries());
@@ -49,27 +61,11 @@ export function SearchBar({
 
         setInternalSearch(newSearch);
         setInternalFilters(newFilters);
-
-        setFilters(newFilters);
-        setSearch(newSearch);
     }, [searchParams]);
 
     async function handleSearch(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
-        setFilters(internalFilter);
-        setSearch(internalSearch);
-        const query: Record<string, string> = {
-        search: internalSearch,
-        };
-
-        // Include filters in the URL
-        Object.entries(internalFilter).forEach(([key, val]) => {
-        query[key] = String(val);
-        });
-
-        // Push new URL without reloading
-        const queryString = new URLSearchParams(query).toString();
-        router.push(`?${queryString}`);
+        updateSearchURL();
     }
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {

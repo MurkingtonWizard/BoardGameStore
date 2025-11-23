@@ -39,7 +39,6 @@ export const FetchGameSearch = async (search: string, filters: Filters | null, c
         page,
         context
     };
-    console.log("Searching for:", payload);
     try {
         const response = await fetch('https://gndbiwggpk.execute-api.us-east-2.amazonaws.com/Initial/SearchAndFilter',
         {
@@ -50,7 +49,7 @@ export const FetchGameSearch = async (search: string, filters: Filters | null, c
         if(resultData.statusCode == 200) {
             return {
                 games: resultData.body.games as IBoardGame[],
-                total_pages: (resultData.body.total_games / 12 + 1)
+                total_pages: Math.ceil(resultData.body.total_games / 12)
             };
         }
         return {

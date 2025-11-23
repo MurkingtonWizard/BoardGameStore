@@ -66,6 +66,10 @@ export const RecordFunds = async (amount: number): Promise<boolean> => {
 }
 
 export const IsLoggedIn = () => {
+	if (typeof window === "undefined") {
+		console.log("Is logged in window undefined");
+		return false;
+	}
 	let token = localStorage.getItem('token');
 	return token !== null ? true : false
 }

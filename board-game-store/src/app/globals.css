@@ -167,6 +167,11 @@ button {
   color: var(--color-foreground-dark);
   cursor: default;
 }
+.page-link a.disabled {
+    pointer-events: none;
+    opacity: 0.4;
+    cursor: default;
+}
 
 .return-page {
   display: flex;
