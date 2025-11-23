@@ -1,5 +1,6 @@
 'use client'
 import { QuantityCount } from "@/app/Components";
+import { CreateReturn } from "@/Controllers";
 import { IBoardGame } from "@/model";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -22,9 +23,15 @@ export default function ReturnPage() {
     
     if (!game) return <p className="pt-24 p-8">Loading...</p>;
 
-    const handleReturn = () => {
-        alert(`Returning ${returnAmt} copy/copies of ${game.name}`);
-        router.back();
+    const handleReturn = async () => {
+      const transaction = {
+        boardGameID: game.id,
+        quantity: returnAmt
+      };
+      const success = await CreateReturn(transaction);
+      if (success) {
+          router.back();
+      }
     };
 
     return (

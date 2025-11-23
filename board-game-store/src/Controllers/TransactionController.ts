@@ -27,7 +27,7 @@ export const UpdateOwnedGame = async (boardGameID: number, action: OwnedAction):
 }
 
 export const CreateTransaction = async (transactions: {boardGameID: number, quantity: number}[]): Promise<ITransaction | boolean> => {
-    if(!IsLoggedIn) return false;
+    if(!IsLoggedIn()) return false;
     const payload = {
         "token" : localStorage.getItem('token'),
         transactions
@@ -50,7 +50,7 @@ export const CreateTransaction = async (transactions: {boardGameID: number, quan
 }
 
 export const CreateReturn = async (transaction: {boardGameID: number, quantity: number}): Promise<IReturn | boolean> => {
-    if(!IsLoggedIn) return false;
+    if(!IsLoggedIn()) return false;
     const payload = {
         "token" : localStorage.getItem('token'),
         transaction
@@ -62,6 +62,7 @@ export const CreateReturn = async (transaction: {boardGameID: number, quantity: 
             body: JSON.stringify(payload),
         });
         const resultData = await response.json();
+        console.log(resultData)
         if(resultData.statusCode === 200) {
             return resultData.body;
         }

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Icon, PageType, SearchBar } from "@/app/Components"
 import { Filters, DefaultFilter, Login, IsLoggedIn } from "@/Controllers"
+import { useEffect, useState } from "react";
 
 
 
@@ -13,6 +14,13 @@ export function Header({
             pageType: PageType
         }) {
 
+    const [loggedIn, setLoggedIn] = useState<boolean | null>(null);
+
+    useEffect(() => {
+        // Only run on client
+        setLoggedIn(IsLoggedIn());
+    }, []);
+
     return (
     <header>
         <nav className="header">
@@ -23,12 +31,14 @@ export function Header({
             {pageType !== "other" && (
                 <SearchBar/>
             )}
-            { IsLoggedIn() ?
-                <Link href="/account" className="link"><Icon type="Account" size="2em"/></Link>
-                :
-                <Link href="/login" className="link"><Icon type="Account" size="2em"/></Link>
-            }
-            <Link href={"/checkout"} className="link"><Icon type="ShoppingCart" size="2em"/></Link>
+            <div className="header-group">
+                <Link href={"/checkout"} className="link"><Icon type="ShoppingCart" size="2em"/></Link>
+                { loggedIn ?
+                    <Link href="/account" className="link"><Icon type="Account" size="2em"/></Link>
+                    :
+                    <Link href="/login" className="link"><Icon type="Account" size="2em"/></Link>
+                }
+            </div>
         </nav>
     </header>
     );
