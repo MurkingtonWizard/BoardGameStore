@@ -185,6 +185,10 @@ button {
   max-width: 400px;
 }
 
+.account input {
+  padding-inline: 0.5em;
+}
+
 .account button {
   margin-top: 1rem;
   padding: 0.6rem 1.2rem;
