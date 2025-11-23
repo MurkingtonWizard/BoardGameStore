@@ -1,13 +1,13 @@
 "use client"
 import { ReactElement, useEffect, useMemo, useRef, useState } from "react";
-import { Footer, Header, LibraryPage, StorePage, Signup } from "@/app/Components";
+import { Footer, Header, LibraryPage, StorePage } from "@/app/Components";
 import { IBoardGame } from "@/model";
 import { DefaultFilter, FetchGameSearch, Filters, } from "@/Controllers"
 import { useSearchParams } from "next/navigation";
 
 export interface ChildProps {
     boardGames: IBoardGame[];
-    maxPage: number// [[number, number], React.Dispatch<React.SetStateAction<[number, number]>>],
+    maxPage: number
 };
 export interface RefreshProp {
     onRefresh: () => void; 
@@ -18,13 +18,9 @@ interface PageWrapperProps {
   children: (props: ChildProps & RefreshProp) => AllowedChildPage;
 }
 
-
 export function PageWrapper({ children }: PageWrapperProps) {
     const [prevSearch, setPrevSearch] = useState("");
     const [prevFilters, setPrevFilters] = useState(DefaultFilter);
-    //const [search, setSearch] = useState("");
-    //const [filters, setFilters] = useState(DefaultFilter);
-    //const [pages, setPages] = useState<[number, number]>([1,0]);
     const [games, setGames] = useState<IBoardGame[]>([]);
     const [refresh, setRefresh] = useState(0);
     const fetchIndex = useRef(0); 

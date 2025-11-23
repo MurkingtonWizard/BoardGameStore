@@ -23,7 +23,12 @@ export function Header({
             {pageType !== "other" && (
                 <SearchBar/>
             )}
-            <Link href={IsLoggedIn() ? "/account" : "/register"} className="link"><Icon type="Account" size="2em"/></Link>
+            { IsLoggedIn() ?
+                <Link href="/account" className="link"><Icon type="Account" size="2em"/></Link>
+                :
+                <Link href="/login" className="link"><Icon type="Account" size="2em"/></Link>
+            }
+            
         </nav>
     </header>
     );
