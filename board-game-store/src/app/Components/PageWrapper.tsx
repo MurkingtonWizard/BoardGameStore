@@ -1,6 +1,6 @@
 "use client"
 import { ReactElement, useEffect, useRef, useState } from "react";
-import { Footer, Header, LibraryPage, StorePage, Signup } from "@/app/Components";
+import { Footer, Header, LibraryPage, StorePage, Signup, LoginPage } from "@/app/Components";
 import { IBoardGame } from "@/model";
 import { DefaultFilter, FetchGameSearch, } from "@/Controllers"
 
@@ -32,10 +32,11 @@ export function PageWrapper({ children }: PageWrapperProps) {
         onRefresh: () => { setRefresh(refresh === 1 ? 0 : 1); }, 
     });
 
-    const type: "store" | "library" | "signup" | "unknown" = 
+    const type: "store" | "library" | "signup" | "login" | "unknown" = 
         child.type === StorePage ? "store" :
         child.type === LibraryPage ? "library" :
-		child.type === Signup ? "signup":
+	child.type === Signup ? "signup" :
+	child.type === LoginPage ? "login" :
         "unknown";
 
     const FetchGames = (async () => {

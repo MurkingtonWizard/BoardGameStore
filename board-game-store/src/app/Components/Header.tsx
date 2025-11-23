@@ -21,8 +21,8 @@ export function Header({
             <Link href={"/library"} className="link"><Icon type="Library" size="2em"/></Link>
             <SearchBar search={search} filter={filter}/>
             <Link href={"/account"} className="link"><Icon type="Account" size="2em"/></Link>
-			<button type = "button" onClick = {async () => Login("test@test.com", "password")}>Login Test</button>
 			<Link href={"/register"} className="link">Register</Link>
+			<Link href={"/login"} className="link">Login</Link>
         </nav>
     </header>
     );

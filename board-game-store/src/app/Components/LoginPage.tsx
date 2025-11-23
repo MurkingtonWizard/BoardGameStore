@@ -1,22 +1,20 @@
-import { Register } from "@/Controllers";
+import { Login } from "@/Controllers";
 import { useRouter } from "next/navigation";
 import { FormEvent} from "react";
 
-export function Signup(props: any) {
+export function LoginPage(props: any) {
 	const router = useRouter();
 
-	async function handleSignup(e: FormEvent<HTMLFormElement>) {
+	async function handleLogin(e: FormEvent<HTMLFormElement>) {
 		e.preventDefault();
 		try {
 			const email = document.getElementById("email").value;
-			const username = document.getElementById("username").value;
-			const password = document.getElementById("password").value;
-			console.log(email, username, password, "email user password");
-			await Register(email, username, password);
-			console.log("successful registration!");
+			const password = document.getElementById("password").value ;
+			await Login(email, password);
+			console.log("successful login!");
 			router.push("/");
 		} catch (err) {
-			console.log("Registration error:", err);
+			console.log("Login error:", err);
 		}
 	}
 
@@ -30,7 +28,7 @@ export function Signup(props: any) {
     		}}>
       		<form
         	id="createAccount"
-        	onSubmit={handleSignup}
+        	onSubmit={handleLogin}
         	style={{
           	display: "flex",
           	flexDirection: "column",
@@ -45,8 +43,6 @@ export function Signup(props: any) {
       		>
 		<label htmlFor="email">Email</label>
 		<input type="email" id="email" name="email" style ={{border: "1px solid #000"}} required />
-		<label htmlFor="username">Username</label>
-		<input type="text" id="username" name="username" style ={{border: "1px solid #000"}} required />
 		<label htmlFor="password">Password</label>
 		<input type="password" id="password" name="password" style ={{border: "1px solid #000"}} required />
 		<button type="submit">Sign up</button>
