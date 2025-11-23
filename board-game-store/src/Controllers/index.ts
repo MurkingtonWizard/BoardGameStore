@@ -1,5 +1,5 @@
 export type { Filters } from "./SearchController"
 export { FetchGameSearch, DefaultFilter } from "./SearchController"
-export { Login, IsLoggedIn, RecordFunds, Register } from "./AccountController"
-export { UpdateOwnedGame } from "./TransactionController"
+export { Login, IsLoggedIn, RecordFunds, Register, GetAccountInfo } from "./AccountController"
+export { UpdateOwnedGame, CreateTransaction, CreateReturn } from "./TransactionController"
 export { RateGame } from "./RatingController"

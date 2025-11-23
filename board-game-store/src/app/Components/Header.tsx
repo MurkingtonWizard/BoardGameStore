@@ -28,7 +28,7 @@ export function Header({
                 :
                 <Link href="/login" className="link"><Icon type="Account" size="2em"/></Link>
             }
-            
+            <Link href={"/checkout"} className="link"><Icon type="ShoppingCart" size="2em"/></Link>
         </nav>
     </header>
     );

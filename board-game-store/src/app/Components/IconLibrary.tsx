@@ -1,4 +1,4 @@
-export type IconType = "Account" | "Home" | "Search" | "Filter" | "Library" | "Reset";
+export type IconType = "Account" | "Home" | "Search" | "Filter" | "Library" | "Reset" | "ShoppingCart";
 
 interface IconProps {
     type: IconType;
@@ -44,6 +44,11 @@ const iconMap: Record<string, React.FC<{size?: string; color?: string, className
         <path d="m3.98652376 1.07807068c-2.38377179 1.38514556-3.98652376 3.96636605-3.98652376 6.92192932 0 4.418278 3.581722 8 8 8s8-3.581722 8-8-3.581722-8-8-8"/>
         <path d="m4 1v4h-4" transform="matrix(1 0 0 -1 0 6)"/>
       </g>
+    </svg>
+  ),
+  ShoppingCart: ({ size = "1em", color = "currentColor", className="" }) => (
+    <svg className={className} fill={color} width={size} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M7 18c-1.104 0-2 .896-2 2s.896 2 2 2 2-.896 2-2-.896-2-2-2m10 0c-1.104 0-2 .896-2 2s.896 2 2 2 2-.896 2-2-.896-2-2-2M7.16 14.26l.84-2h7.72l1.68 4H6.32l.84-2.01M20.488 6.344A1.003 1.003 0 0 0 19.5 5H5.21l-.94-2H1v2h2l3.6 7.59-1.35 2.44C4.52 15.37 5.48 17 7 17h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12L8.1 13h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.63c.08-.14.12-.3.12-.46 0-.55-.45-1-1-1z"/>
     </svg>
   ),
 };
