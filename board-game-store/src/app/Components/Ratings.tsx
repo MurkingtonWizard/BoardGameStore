@@ -16,7 +16,8 @@ export function Ratings({ gameId, onRatingChange }: RatingsProps) {
   useEffect(() => {
     const fetchRating = async () => {
       const rating = await RateGame(gameId, "getUserRating");
-      setRating(rating);
+      setRating(rating === -1 ? 0 : rating);
+
     };
 
     fetchRating();

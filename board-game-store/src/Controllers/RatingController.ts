@@ -4,7 +4,8 @@ export const RateGame = async (boardGameID: number, action: RateGameAction, numb
     const API_URL = "https://gndbiwggpk.execute-api.us-east-2.amazonaws.com/Initial/Ratings";
     
     let token = localStorage.getItem('token');
-    if(token === null) return 0;
+    if (token === null) return -1;
+
     
     const payload: Record<string, any> = {
         "token" : token,
@@ -17,7 +18,7 @@ export const RateGame = async (boardGameID: number, action: RateGameAction, numb
     }
     console.log(JSON.stringify(payload));
     try {
-        const response = await fetch(API_URL,
+        const response = await fetch("https://gndbiwggpk.execute-api.us-east-2.amazonaws.com/Initial/Ratings",
         {
             method: 'POST',
             body: JSON.stringify(payload),
