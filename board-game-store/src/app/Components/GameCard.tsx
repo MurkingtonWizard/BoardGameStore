@@ -81,16 +81,6 @@ export function GameCard({ game, onRefresh }: {game: IBoardGame} & RefreshProp) 
     setInCart(addedOrRemoved); 
   };
 
-  let returnClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation();
-    if(!IsLoggedIn()) {
-        alert("Log in to use this feature");
-        return;
-    }
-    localStorage.setItem("returnGame", JSON.stringify(game));
-    router.push(`/return/${game.id}`);
-  }
-
   return (
     <div
       onClick={handleClick}
@@ -113,7 +103,7 @@ export function GameCard({ game, onRefresh }: {game: IBoardGame} & RefreshProp) 
           </p>
         </div>
         <div className="page-col" style={{fontSize: "12px", gap: "0.5em"}}>
-          <OwnedButton ownedClick={ownedClick} returnClick={returnClick} isOwned={game.owned} quantity={game.quantity}/>
+          <OwnedButton ownedClick={ownedClick} isOwned={game.owned} quantity={game.quantity}/>
           <button
             className={`px-4 py-2 rounded font-semibold transition ${
               inCart ? "bg-red-600 hover:bg-red-700 text-white" : "bg-blue-600 hover:bg-blue-700 text-white"
