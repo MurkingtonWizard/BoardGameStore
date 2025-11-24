@@ -1,11 +1,12 @@
 type quantityCountProps = {
     amount: [number, React.Dispatch<React.SetStateAction<number>>],
+    min?: number,
     max: number
 };
 
-export function QuantityCount({amount: [amt, setAmt], max}: quantityCountProps) {
+export function QuantityCount({amount: [amt, setAmt], min=1, max}: quantityCountProps) {
     const decrement = () => {
-        if (amt > 1) setAmt(amt - 1);
+        if (amt > min) setAmt(amt - 1);
     };
 
     const increment = () => {
@@ -14,7 +15,7 @@ export function QuantityCount({amount: [amt, setAmt], max}: quantityCountProps) 
 
     return (
         <div className="quantityCount">
-        <button onClick={decrement} disabled={amt <= 1}>-</button>
+        <button onClick={decrement} disabled={amt <= min}>-</button>
         <p>{amt}</p>
         <button onClick={increment} disabled={amt >= max}>+</button>
         </div>

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { GetAccountInfo, RecordFunds, IsLoggedIn, Logout } from "@/Controllers/AccountController";
+import Link from "next/link";
 
 export default function AccountPage() {
   const [user, setUser] = useState<{ email: string; username: string } | null>(null);
@@ -132,6 +133,11 @@ export default function AccountPage() {
             Add
           </button>
         </div>
+      </div>
+      <div className="bg-white shadow-sm rounded-xl p-5 space-y-3">
+        <Link href="/account/order-history" className="mt-3 ml-3 border border-gray-400 text-gray-700 px-4 py-2 rounded hover:bg-gray-100">
+          Order History
+        </Link>
       </div>
     </div>
   );

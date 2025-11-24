@@ -48,13 +48,38 @@ export const CreateTransaction = async (transactions: {boardGameID: number, quan
         return false;
     }
 }
+// export const CreateReturn = async (transaction: {boardGameID: number, quantity: number}): Promise<IReturn | boolean> => {
+//     if(!IsLoggedIn()) return false;
+//     const payload = {
+//         "token" : localStorage.getItem('token'),
+//         transaction
+//     };
+//     try {
+//         const response = await fetch('https://gndbiwggpk.execute-api.us-east-2.amazonaws.com/Initial/Return',
+//         {
+//             method: 'POST',
+//             body: JSON.stringify(payload),
+//         });
+//         const resultData = await response.json();
+//         console.log(resultData)
+//         if(resultData.statusCode === 200) {
+//             return resultData.body;
+//         }
+//         return false;
+//     } catch (error) {
+//         console.error('Error fetching data:', error);
+//         return false;
+//     }
+// }
 
-export const CreateReturn = async (transaction: {boardGameID: number, quantity: number}): Promise<IReturn | boolean> => {
+
+export const CreateReturn = async (transactions: {boardGameID: number, transaction_id: number, quantity: number}[]): Promise<IReturn | boolean> => {
     if(!IsLoggedIn()) return false;
     const payload = {
         "token" : localStorage.getItem('token'),
-        transaction
+        transactions
     };
+    console.log(payload);
     try {
         const response = await fetch('https://gndbiwggpk.execute-api.us-east-2.amazonaws.com/Initial/Return',
         {
@@ -65,6 +90,29 @@ export const CreateReturn = async (transaction: {boardGameID: number, quantity: 
         console.log(resultData)
         if(resultData.statusCode === 200) {
             return resultData.body;
+        }
+        return false;
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        return false;
+    }
+}
+
+export const GetOrderHistory = async(): Promise<ITransaction[] | false> => {
+	if (!IsLoggedIn()) return false;
+    
+    const payload = {
+        "token" : localStorage.getItem('token'),
+    }
+    try {
+        const response = await fetch('https://gndbiwggpk.execute-api.us-east-2.amazonaws.com/Initial/GetOrderHistory',
+        {
+            method: 'POST',
+            body: JSON.stringify(payload),
+        });
+        const resultData = await response.json();
+        if(resultData.statusCode === 200) {
+            return resultData.body as ITransaction[];
         }
         return false;
     } catch (error) {

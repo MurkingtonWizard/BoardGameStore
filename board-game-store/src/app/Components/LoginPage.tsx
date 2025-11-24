@@ -29,7 +29,7 @@ export function LoginPage(props: any) {
 				<button type="submit">Log In</button>
 			</form>
 			<div>
-				Don't have an account? <Link href="/register" className="inline-link">Create Account</Link>
+				Don't have an account? <Link href="/account/register" className="inline-link">Create Account</Link>
 			</div>
 		</main>
 	);
