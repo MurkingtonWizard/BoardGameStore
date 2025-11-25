@@ -7,7 +7,9 @@ import { IBoardGame } from "@/model/BoardGame";
 import { Ratings } from "@/app/Components/Ratings";
 import { Reviews } from "@/app/Components/Reviews";
 
-import { FetchReimplementations, AddToLibrary, FetchGameRatings } from "@/Controllers/GameController";
+import { FetchReimplementations, FetchGameRatings } from "@/Controllers/GameController";
+import { OwnedButton } from "@/app/Components";
+import { IsLoggedIn, UpdateOwnedGame } from "@/Controllers";
 
 const STAR_PATH =
   "M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.973a1 1 0 00.95.69h4.18c.969 0 1.371 1.24.588 1.81l-3.387 2.463a1 1 0 00-.364 1.118l1.287 3.973c.3.921-.755 1.688-1.54 1.118L10.9 15.347a1 1 0 00-1.175 0L6.337 17.81c-.784.57-1.838-.197-1.54-1.118l1.287-3.973a1 1 0 00-.364-1.118L2.333 9.4c-.783-.57-.38-1.81.588-1.81h4.18a1 1 0 00.95-.69l1.286-3.973z";
@@ -90,6 +92,17 @@ export default function GameDetailPage() {
     setLoadingRating(false);
   };
 
+  let ownedClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    if(!IsLoggedIn()) {
+        alert("Log in to use this feature");
+        return;
+    }
+    if(game === null) return;
+    if(await UpdateOwnedGame(game.id, game.owned ? "remove" : "add")) {
+        router.back();
+    }
+  }
   useEffect(() => {
     if (id) loadRating();
   }, [id]);
@@ -218,19 +231,7 @@ export default function GameDetailPage() {
           </div>
 
           {/* Add to Library */}
-          <button
-            className="mt-6 bg-blue-600 text-white px-5 py-2 rounded hover:bg-blue-700"
-            onClick={() => {
-              const added = AddToLibrary(game);
-              alert(
-                added
-                  ? `${game.name} added to your library!`
-                  : `${game.name} is already in your library.`
-              );
-            }}
-          >
-            Add to Library
-          </button>
+          <OwnedButton ownedClick={ownedClick} isOwned={game.owned} quantity={game.quantity}/>
 
           {/* Back */}
           <button

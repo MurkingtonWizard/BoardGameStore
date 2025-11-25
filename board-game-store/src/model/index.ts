@@ -1,3 +1,3 @@
 export type { IBoardGame } from "./BoardGame"
-export type { ITransaction } from "./Transaction"
+export type { ITransaction, ITransactionItem } from "./Transaction"
 export type { IReturn } from "./Return"

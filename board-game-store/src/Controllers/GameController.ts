@@ -76,13 +76,3 @@ export const FetchGameRatings = async (
   }
 };
 
-export const AddToLibrary = (game: IBoardGame): boolean => {
-  const saved = localStorage.getItem("library");
-  const current = saved ? JSON.parse(saved) : [];
-
-  if (current.some((g: IBoardGame) => g.id === game.id)) return false;
-
-  current.push(game);
-  localStorage.setItem("library", JSON.stringify(current));
-  return true;
-};

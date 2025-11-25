@@ -36,7 +36,7 @@ export function Header({
                 { loggedIn ?
                     <Link href="/account" className="link"><Icon type="Account" size="2em"/></Link>
                     :
-                    <Link href="/login" className="link"><Icon type="Account" size="2em"/></Link>
+                    <Link href="/account/login" className="link"><Icon type="Account" size="2em"/></Link>
                 }
             </div>
         </nav>
