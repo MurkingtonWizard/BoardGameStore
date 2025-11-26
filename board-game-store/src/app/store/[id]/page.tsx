@@ -11,6 +11,43 @@ import { FetchReimplementations, FetchGameRatings } from "@/Controllers/GameCont
 import { OwnedButton } from "@/app/Components";
 import { IsLoggedIn, UpdateOwnedGame } from "@/Controllers";
 
+const STAR_PATH =
+  "M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.973a1 1 0 00.95.69h4.18c.969 0 1.371 1.24.588 1.81l-3.387 2.463a1 1 0 00-.364 1.118l1.287 3.973c.3.921-.755 1.688-1.54 1.118L10.9 15.347a1 1 0 00-1.175 0L6.337 17.81c-.784.57-1.838-.197-1.54-1.118l1.287-3.973a1 1 0 00-.364-1.118L2.333 9.4c-.783-.57-.38-1.81.588-1.81h4.18a1 1 0 00.95-.69l1.286-3.973z";
+
+function StoreStarRating({ rating }: { rating: number }) {
+  return (
+    <div className="flex items-center gap-2">
+      {[1, 2, 3, 4, 5].map((i) => {
+        const fillPercent = Math.min(Math.max(rating - (i - 1), 0), 1) * 100;
+
+        return (
+          <svg
+            key={i}
+            viewBox="0 0 20 20"
+            className="w-6 h-6"
+            style={{
+              fill: `url(#star-${i})`,
+            }}
+          >
+            <defs>
+              <linearGradient id={`star-${i}`} x1="0" x2="1">
+                <stop offset={`${fillPercent}%`} stopColor="#facc15" />
+                <stop offset={`${fillPercent}%`} stopColor="#d1d5db" />
+              </linearGradient>
+            </defs>
+
+            <path d={STAR_PATH} />
+          </svg>
+        );
+      })}
+
+      <span className="text-gray-700 text-sm font-medium">
+        {rating.toFixed(1)} / 5
+      </span>
+    </div>
+  );
+}
+
 export default function GameDetailPage() {
   const { id } = useParams();
   const router = useRouter();
@@ -130,14 +167,17 @@ export default function GameDetailPage() {
               <strong>Rank:</strong> #{game.rank}
             </p>
 
-            <p>
+            <div>
               <strong>Store Page Rating:</strong>{" "}
-              {loadingRating
-                ? "Loading..."
-                : storeRating !== null
-                ? storeRating
-                : "No ratings yet"}
-            </p>
+              {loadingRating ? (
+                <span>Loading...</span>
+              ) : storeRating !== null ? (
+                <StoreStarRating rating={storeRating} />
+              ) : (
+                <span>No ratings yet</span>
+              )}
+            </div>
+
           </div>
 
           {/* Reimplementations */}
