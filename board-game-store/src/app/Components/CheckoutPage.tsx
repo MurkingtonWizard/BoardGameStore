@@ -36,7 +36,7 @@ function CheckoutItem({ game, amount: [quantity, setQuantity], balance, onRemove
       </button>
 
       <button onClick={onRemove} className="p-2 hover:bg-gray-200 rounded transition">
-        <Icon type="Account" className="w-6 h-6 text-red-600 hover:text-red-800" />
+        <Icon type="Trash" className="w-6 h-6 text-red-600 hover:text-red-800" />
       </button>
     </div>
   );

@@ -1,4 +1,4 @@
-export type IconType = "Account" | "Home" | "Search" | "Filter" | "Library" | "Reset" | "ShoppingCart";
+export type IconType = "Account" | "Home" | "Search" | "Filter" | "Library" | "Reset" | "ShoppingCart" | "Trash";
 
 interface IconProps {
     type: IconType;
@@ -51,4 +51,9 @@ const iconMap: Record<string, React.FC<{size?: string; color?: string, className
       <path d="M7 18c-1.104 0-2 .896-2 2s.896 2 2 2 2-.896 2-2-.896-2-2-2m10 0c-1.104 0-2 .896-2 2s.896 2 2 2 2-.896 2-2-.896-2-2-2M7.16 14.26l.84-2h7.72l1.68 4H6.32l.84-2.01M20.488 6.344A1.003 1.003 0 0 0 19.5 5H5.21l-.94-2H1v2h2l3.6 7.59-1.35 2.44C4.52 15.37 5.48 17 7 17h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12L8.1 13h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.63c.08-.14.12-.3.12-.46 0-.55-.45-1-1-1z"/>
     </svg>
   ),
+  Trash: ({ size = "1em", color = "currentColor", className="" }) => (
+    <svg className={className} fill={color} width={size} viewBox="-3 -2 24 24" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin" >
+      <path d="M6 2V1a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1h4a2 2 0 0 1 2 2v1a2 2 0 0 1-2 2h-.133l-.68 10.2a3 3 0 0 1-2.993 2.8H5.826a3 3 0 0 1-2.993-2.796L2.137 7H2a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm10 2H2v1h14zM4.141 7l.687 10.068a1 1 0 0 0 .998.932h6.368a1 1 0 0 0 .998-.934L13.862 7zM7 8a1 1 0 0 1 1 1v7a1 1 0 0 1-2 0V9a1 1 0 0 1 1-1m4 0a1 1 0 0 1 1 1v7a1 1 0 0 1-2 0V9a1 1 0 0 1 1-1"/>
+    </svg>
+  )
 };
