@@ -35,7 +35,7 @@ export function RegisterPage(props: any) {
 			</form>
 		
 			<div>
-				Already have an account? <Link href="/login" className="inline-link">Login</Link>
+				Already have an account? <Link href="/account/login" className="inline-link">Login</Link>
 			</div>
 		</main>
 	);
