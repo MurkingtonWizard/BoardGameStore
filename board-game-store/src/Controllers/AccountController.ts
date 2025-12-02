@@ -38,6 +38,8 @@ export const Register = async(email: string, username: string, password: string)
 		if (resultData.statusCode != 200) {
 			throw new Error("Could not create account!");
 		}
+		const token = resultData.body.token;
+		localStorage.setItem("token", token);
 		return true;
 	} catch (err) {
 		console.log("Account creation error:", err);
