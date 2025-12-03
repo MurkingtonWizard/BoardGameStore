@@ -54,6 +54,10 @@ function Order({ transaction, onRefresh } : {transaction: ITransaction}&RefreshP
         onRefresh();
     }
 
+    const canReturnAll = transaction.items
+        .map(item => item.quantity - item.returned_quantity)
+        .reduce((acc, val) => acc + val, 0) !== 0;
+
     return (
         <div className="page-row bg-white shadow-sm rounded-xl p-5 space-y-1" style={{gap: "1em", width: "60vw", justifyContent: "space-between"}}>
             <div className="page-col" style={{justifyContent: "center"}}>
@@ -63,7 +67,7 @@ function Order({ transaction, onRefresh } : {transaction: ITransaction}&RefreshP
                 <span style={{textAlign: "center", fontWeight: "600" }}>
                     ${(transaction.total).toFixed(2)}
                 </span>
-                <button type="button" onClick={ReturnAll} className="return-button"style={{margin: "0", }}>Return All</button>
+                <button disabled={!canReturnAll} type="button" onClick={ReturnAll} className="return-button"style={{margin: "0", }}>Return All</button>
             </div>
             <div className="page-col" style={{width: "100%"}}>
                 {transaction.items.map((item, index) => (
