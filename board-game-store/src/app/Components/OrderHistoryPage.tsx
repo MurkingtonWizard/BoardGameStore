@@ -2,9 +2,15 @@ import { CreateReturn, GetOrderHistory } from "@/Controllers/TransactionControll
 import { ITransaction, ITransactionItem } from "@/model";
 import { useEffect, useState } from "react";
 import { QuantityCount } from "./QuantityCount";
+import { RefreshProp } from "./PageWrapper";
 
 export function OrderHistoryPage(props: any) {
+    const [refresh, setRefresh] = useState(0);
     const [orders, setOrders] = useState<ITransaction[]>([])
+
+    const onRefresh = () => {
+        setRefresh(refresh === 1 ? 0 : 1)
+    }
 
     const FetchOrders = async () => {
         const result = await GetOrderHistory();
@@ -14,7 +20,7 @@ export function OrderHistoryPage(props: any) {
 
     useEffect(() => {
         FetchOrders();
-    }, []);
+    }, [refresh]);
 
     return (
         <main className="pt-24 p-8">
@@ -27,7 +33,7 @@ export function OrderHistoryPage(props: any) {
                     :
                     <div className="page-col" style={{gap: "0.5rem"}}>
                         {orders.map((transaction, index) => (
-                            <Order key={index} transaction={transaction}/>
+                            <Order key={index} transaction={transaction} onRefresh={onRefresh}/>
                         ))}
                     </div>
                     
@@ -37,14 +43,15 @@ export function OrderHistoryPage(props: any) {
     );
 }
 
-function Order({ transaction } : {transaction: ITransaction}) {
+function Order({ transaction, onRefresh } : {transaction: ITransaction}&RefreshProp) {
     const ReturnAll = async () => {
         const transactions = transaction.items.map(item => ({
             boardGameID: item.id,
             transaction_id: transaction.id,
-            quantity: item.quantity
+            quantity: item.quantity - item.returned_quantity
         }));
         await CreateReturn(transactions);
+        onRefresh();
     }
 
     return (
@@ -60,7 +67,7 @@ function Order({ transaction } : {transaction: ITransaction}) {
             </div>
             <div className="page-col" style={{width: "100%"}}>
                 {transaction.items.map((item, index) => (
-                    <OrderItem key={index} transactionID={transaction.id} item={item}/>
+                    <OrderItem key={index} transactionID={transaction.id} item={item} onRefresh={onRefresh}/>
                 ))}
 
             </div>
@@ -68,12 +75,13 @@ function Order({ transaction } : {transaction: ITransaction}) {
     );
 }
 
-function OrderItem({ transactionID, item } : {transactionID: number, item: ITransactionItem}) {
+function OrderItem({ transactionID, item, onRefresh } : {transactionID: number, item: ITransactionItem}&RefreshProp) {
     const [quantity, setQuantity] = useState(0);
 
     const ReturnItem = async () => {
         const transaction = [{boardGameID: item.id, transaction_id: transactionID, quantity: quantity }]
         await CreateReturn(transaction);
+        onRefresh();
     }
 
     return (
